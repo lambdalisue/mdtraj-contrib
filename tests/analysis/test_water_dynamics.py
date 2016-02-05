@@ -35,23 +35,15 @@ def test_build_overlap_indexes():
     overlap_indexes = list(map(lambda x: tuple(x), overlap_indexes))
     eq_(overlap_indexes, [
         (1, 4),
-        (4,),
         (),
-        (6,),
         (2,),
-        (),
         (1, 3, 4),
-        (1, 3),
     ])
 
     overlap_indexes = build_overlap_indexes(indexes, 3, exclude=set([0]))
     overlap_indexes = list(map(lambda x: tuple(x), overlap_indexes))
     eq_(overlap_indexes, [
         (4,),
-        (2,),
-        (),
         (4,),
-        (),
-        (),
         (1, 3),
     ])
