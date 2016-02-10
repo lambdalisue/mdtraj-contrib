@@ -80,7 +80,7 @@ def build_overlap_indexes(np.ndarray[INT_t, ndim=2] indexes,
         lhs = set(indexes[t])
         rhs = set(indexes[t + dt])
         both = sorted(list(lhs & rhs - exclude))
-        overlaps.append(np.array(both))
+        overlaps.append(np.array(both, dtype=np.int))
     return overlaps
 
 
@@ -89,37 +89,38 @@ cdef class OrientationalRelaxation(object):
     cdef object trajectory
     cdef np.ndarray indexes
     cdef int nframes
-    cdef int dtmax
+    cdef int taumax
     cdef dict _cached_overlap_indexes
 
     def __init__(object self,
                  object trajectory,
                  np.ndarray[INT_t, ndim=2] indexes,
-                 int t0=0, int tf=-1, int dtmax=20):
+                 int t0=0, int tf=-1, int taumax=20):
         tf = len(trajectory) if tf < 0 else tf
         self.trajectory = trajectory[t0:tf]
         self.indexes    = indexes[t0:tf]
         self.nframes    = len(self.trajectory)
-        self.dtmax      = dtmax
+        self.taumax      = taumax
         self._cached_overlap_indexes = {}
 
-    def _build_overlap_indexes(object self, int dt):
+    def _build_overlap_indexes(object self, int tau):
         cdef list indexes
-        if dt not in self._cached_overlap_indexes:
+        if tau not in self._cached_overlap_indexes:
             indexes = build_overlap_indexes(
-                self.indexes, dt
+                self.indexes, tau
             )
-            self._cached_overlap_indexes[dt] = indexes
-        return self._cached_overlap_indexes[dt]
+            self._cached_overlap_indexes[tau] = indexes
+        return self._cached_overlap_indexes[tau]
 
-    def _calc_mean_relaxation_delta(object self, list overlap_indexes,
-                                    int dt, int t):
-        cdef np.ndarray[INT_t, ndim=1] indexes_at_t = overlap_indexes[int(t/dt)]
+    def _calc_mean_relaxation_delta(object self,
+                                    list overlap_indexes,
+                                    int t, int tau):
+        cdef np.ndarray[INT_t, ndim=1] indexes_at_t = overlap_indexes[int(t/tau)]
         cdef np.ndarray[FLOAT_t, ndim=2] vectors1 = build_dipole_vectors(
             self.trajectory, indexes_at_t, t
         )
         cdef np.ndarray[FLOAT_t, ndim=2] vectors2 = build_dipole_vectors(
-            self.trajectory, indexes_at_t, t + dt
+            self.trajectory, indexes_at_t, t + tau
         )
         cdef np.ndarray[FLOAT_t, ndim=2] uvectors1 = build_unit_vectors(vectors1)
         cdef np.ndarray[FLOAT_t, ndim=2] uvectors2 = build_unit_vectors(vectors2)
@@ -129,25 +130,79 @@ cdef class OrientationalRelaxation(object):
         ]
         return np.mean(correlations)
 
-    def _calc_mean_relaxation(object self, int dt):
-        cdef list overlap_indexes = self._build_overlap_indexes(dt)
+    def _calc_mean_relaxation(object self, int tau):
+        cdef list overlap_indexes = self._build_overlap_indexes(tau)
         cdef int t
         cdef list relaxation_deltas = [
-            self._calc_mean_relaxation_delta(overlap_indexes, dt, t)
-            for t in range(0, self.nframes-dt, dt)
+            self._calc_mean_relaxation_delta(overlap_indexes, t, tau)
+            for t in range(0, self.nframes-tau, tau)
         ]
         return np.mean(relaxation_deltas)
 
     def calc(object self):
         cdef int dt
         yield 1.0
-        for dt in range(1, self.dtmax+1):
-            yield self._calc_mean_relaxation(dt)
+        for tau in range(1, self.taumax):
+            yield self._calc_mean_relaxation(tau)
 
 def calc_orientational_relaxation(object trajectory,
                                   np.ndarray[INT_t, ndim=2] indexes,
-                                  int t0=0, int tf=-1, int dtmax=20):
+                                  int t0=0, int tf=-1, int taumax=20):
     instance = OrientationalRelaxation(
-        trajectory, indexes, t0, tf, dtmax
+        trajectory, indexes, t0, tf, taumax
+    )
+    return instance.calc()
+
+
+cdef class SurvivalProbability(object):
+
+    cdef object trajectory
+    cdef np.ndarray indexes
+    cdef int nframes
+    cdef int taumax
+    cdef set exclude
+
+    def __init__(object self,
+                 object trajectory,
+                 np.ndarray[INT_t, ndim=2] indexes,
+                 int t0=0, int tf=-1, int taumax=10):
+        tf = len(trajectory) if tf < 0 else tf
+        self.trajectory = trajectory[t0:tf]
+        self.indexes = indexes[t0:tf]
+        self.nframes = len(self.trajectory)
+        self.taumax = taumax
+        self.exclude = set([-1])
+
+    def _count_stayed_atoms(object self, int t, int tau):
+        cdef int dt
+        cdef set stayed = set(self.indexes[t])
+        for dt in range(1, min(tau, len(self.indexes)-t)):
+            stayed &= set(self.indexes[t+dt])
+        return len(stayed - self.exclude)
+
+    def _calc_mean_survival_delta(object self, int t, int tau):
+        cdef int Ntau = self._count_stayed_atoms(t, tau)
+        cdef int Nt   = len(set(self.indexes[t]) - self.exclude)
+        return 0 if Nt == 0 else float(Ntau)/float(Nt)
+
+    def _calc_mean_survival(object self, int tau):
+        cdef int t
+        cdef list survival_deltas = list(filter(
+            lambda float x: x != 0, (
+                self._calc_mean_survival_delta(t, tau)
+                for t in range(1, self.nframes-tau)
+            )))
+        return np.mean(survival_deltas)
+
+    def calc(object self):
+        cdef int tau
+        for tau in range(1, self.taumax+1):
+            yield self._calc_mean_survival(tau)
+
+def calc_survival_probability(object trajectory,
+                              np.ndarray[INT_t, ndim=2] indexes,
+                              int t0=0, int tf=-1, int taumax=20):
+    instance = SurvivalProbability(
+        trajectory, indexes, t0, tf, taumax
     )
     return instance.calc()
