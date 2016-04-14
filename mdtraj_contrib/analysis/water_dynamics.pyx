@@ -87,10 +87,9 @@ def build_overlap_indexes(np.ndarray[INT_t, ndim=2] indexes,
 cdef class OrientationalRelaxation(object):
 
     cdef object trajectory
-    cdef np.ndarray indexes
+    cdef list indexes
     cdef int nframes
     cdef int taumax
-    cdef dict _cached_overlap_indexes
 
     def __init__(object self,
                  object trajectory,
@@ -98,29 +97,21 @@ cdef class OrientationalRelaxation(object):
                  int t0=0, int tf=-1, int taumax=20):
         tf = len(trajectory) if tf < 0 else tf
         self.trajectory = trajectory[t0:tf]
-        self.indexes    = indexes[t0:tf]
         self.nframes    = len(self.trajectory)
         self.taumax      = taumax
-        self._cached_overlap_indexes = {}
 
-    def _build_overlap_indexes(object self, int tau):
-        cdef list indexes
-        if tau not in self._cached_overlap_indexes:
-            indexes = build_overlap_indexes(
-                self.indexes, tau
-            )
-            self._cached_overlap_indexes[tau] = indexes
-        return self._cached_overlap_indexes[tau]
+        self.indexes = []
+        for index in indexes[t0:tf]:
+            self.indexes.append(index[index >= 0])
 
     def _calc_mean_relaxation_delta(object self,
-                                    list overlap_indexes,
                                     int t, int tau):
-        cdef np.ndarray[INT_t, ndim=1] indexes_at_t = overlap_indexes[int(t/tau)]
+        cdef np.ndarray[INT_t, ndim=1] index_at_t = self.indexes[t]
         cdef np.ndarray[FLOAT_t, ndim=2] vectors1 = build_dipole_vectors(
-            self.trajectory, indexes_at_t, t
+            self.trajectory, index_at_t, t
         )
         cdef np.ndarray[FLOAT_t, ndim=2] vectors2 = build_dipole_vectors(
-            self.trajectory, indexes_at_t, t + tau
+            self.trajectory, index_at_t, t + tau
         )
         cdef np.ndarray[FLOAT_t, ndim=2] uvectors1 = build_unit_vectors(vectors1)
         cdef np.ndarray[FLOAT_t, ndim=2] uvectors2 = build_unit_vectors(vectors2)
@@ -131,10 +122,9 @@ cdef class OrientationalRelaxation(object):
         return np.mean(correlations)
 
     def _calc_mean_relaxation(object self, int tau):
-        cdef list overlap_indexes = self._build_overlap_indexes(tau)
         cdef int t
         cdef list relaxation_deltas = [
-            self._calc_mean_relaxation_delta(overlap_indexes, t, tau)
+            self._calc_mean_relaxation_delta(t, tau)
             for t in range(0, self.nframes-tau, tau)
         ]
         return np.mean(relaxation_deltas)
