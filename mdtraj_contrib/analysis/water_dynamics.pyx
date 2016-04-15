@@ -18,6 +18,7 @@ import numpy as np
 import mdtraj as md
 cimport numpy as np
 
+ctypedef np.ndarray ARRAY
 ctypedef np.int_t INT_t
 ctypedef np.float32_t FLOAT_t
 ctypedef np.float64_t DOUBLE_t
@@ -30,7 +31,7 @@ cdef double lg2(double x):
     return (3 * x**2 - 1) / 2.
 
 def build_dipole_vectors(object trajectory,
-                         np.ndarray[INT_t, ndim=1] indexes_at_t,
+                         ARRAY[INT_t, ndim=1] index_at_t,
                          int t):
     """
     Build a M x 3 matrix, M dipole vectros (x, y, z) of water molecules
@@ -44,14 +45,14 @@ def build_dipole_vectors(object trajectory,
     Returns:
         M x 3 matrix : A collection of dipole vectors of water molecules
     """
-    cdef np.ndarray[FLOAT_t, ndim=2] coords = trajectory.xyz[t]
-    cdef np.ndarray[FLOAT_t, ndim=2] Ox = coords[indexes_at_t]
-    cdef np.ndarray[FLOAT_t, ndim=2] H1 = coords[indexes_at_t + 1]
-    cdef np.ndarray[FLOAT_t, ndim=2] H2 = coords[indexes_at_t + 2]
-    cdef np.ndarray[FLOAT_t, ndim=2] vectors = (H1 + H2) * 0.5 - Ox
+    cdef ARRAY[FLOAT_t, ndim=2] coords = trajectory.xyz[t]
+    cdef ARRAY[FLOAT_t, ndim=2] Ox = coords[index_at_t]
+    cdef ARRAY[FLOAT_t, ndim=2] H1 = coords[index_at_t + 1]
+    cdef ARRAY[FLOAT_t, ndim=2] H2 = coords[index_at_t + 2]
+    cdef ARRAY[FLOAT_t, ndim=2] vectors = (H1 + H2) * 0.5 - Ox
     return vectors
 
-def build_unit_vectors(np.ndarray[FLOAT_t, ndim=2] vectors):
+def build_unit_vectors(ARRAY[FLOAT_t, ndim=2] vectors):
     """
     Normalize a M x 3 matrix, M vectors (x, y, z) and return unit vectors
 
@@ -61,27 +62,9 @@ def build_unit_vectors(np.ndarray[FLOAT_t, ndim=2] vectors):
     Returns:
         M x 3 matrix : A collection of unit vectors
     """
-    cdef np.ndarray[FLOAT_t, ndim=1] nvectors = np.linalg.norm(vectors, axis=1)
-    cdef np.ndarray[FLOAT_t, ndim=2] uvectors = vectors / nvectors[:,np.newaxis]
+    cdef ARRAY[FLOAT_t, ndim=1] nvectors = np.linalg.norm(vectors, axis=1)
+    cdef ARRAY[FLOAT_t, ndim=2] uvectors = vectors / nvectors[:,np.newaxis]
     return uvectors
-
-def build_overlap_indexes(np.ndarray[INT_t, ndim=2] indexes,
-                          int dt,
-                          set exclude=set([-1])):
-    """
-    Build overlap indexes
-    """
-    cdef int t = 0
-    cdef set lhs, rhs
-    cdef list both
-    cdef list overlaps = []
-    #for t in range(0, len(indexes)-dt):
-    for t in range(0, len(indexes)-dt, dt):
-        lhs = set(indexes[t])
-        rhs = set(indexes[t + dt])
-        both = sorted(list(lhs & rhs - exclude))
-        overlaps.append(np.array(both, dtype=np.int))
-    return overlaps
 
 
 cdef class OrientationalRelaxation(object):
@@ -93,29 +76,30 @@ cdef class OrientationalRelaxation(object):
 
     def __init__(object self,
                  object trajectory,
-                 np.ndarray[INT_t, ndim=2] indexes,
+                 ARRAY[INT_t, ndim=2] indexes,
                  int t0=0, int tf=-1, int taumax=20):
         tf = len(trajectory) if tf < 0 else tf
         self.trajectory = trajectory[t0:tf]
-        self.nframes    = len(self.trajectory)
-        self.taumax      = taumax
+        self.nframes = len(self.trajectory)
+        self.taumax = taumax
 
         self.indexes = []
+        cdef ARRAY[INT_t, ndim=1] index
         for index in indexes[t0:tf]:
             self.indexes.append(index[index >= 0])
 
     def _calc_mean_relaxation_delta(object self,
                                     int t, int tau):
-        cdef np.ndarray[INT_t, ndim=1] index_at_t = self.indexes[t]
-        cdef np.ndarray[FLOAT_t, ndim=2] vectors1 = build_dipole_vectors(
+        cdef ARRAY[INT_t, ndim=1] index_at_t = self.indexes[t]
+        cdef ARRAY[FLOAT_t, ndim=2] vectors1 = build_dipole_vectors(
             self.trajectory, index_at_t, t
         )
-        cdef np.ndarray[FLOAT_t, ndim=2] vectors2 = build_dipole_vectors(
+        cdef ARRAY[FLOAT_t, ndim=2] vectors2 = build_dipole_vectors(
             self.trajectory, index_at_t, t + tau
         )
-        cdef np.ndarray[FLOAT_t, ndim=2] uvectors1 = build_unit_vectors(vectors1)
-        cdef np.ndarray[FLOAT_t, ndim=2] uvectors2 = build_unit_vectors(vectors2)
-        cdef np.ndarray[FLOAT_t, ndim=1] lhs, rhs
+        cdef ARRAY[FLOAT_t, ndim=2] uvectors1 = build_unit_vectors(vectors1)
+        cdef ARRAY[FLOAT_t, ndim=2] uvectors2 = build_unit_vectors(vectors2)
+        cdef ARRAY[FLOAT_t, ndim=1] lhs, rhs
         cdef list correlations = [
             lg2(np.dot(lhs, rhs)) for lhs, rhs in zip(uvectors1, uvectors2)
         ]
@@ -123,20 +107,20 @@ cdef class OrientationalRelaxation(object):
 
     def _calc_mean_relaxation(object self, int tau):
         cdef int t
-        cdef list relaxation_deltas = [
+        relaxation_deltas = np.array([
             self._calc_mean_relaxation_delta(t, tau)
             for t in range(0, self.nframes-tau, tau)
-        ]
-        return np.mean(relaxation_deltas)
+        ])
+        return np.mean(relaxation_deltas[~np.isnan(relaxation_deltas)])
 
     def calc(object self):
-        cdef int dt
+        cdef int tau
         yield 1.0
-        for tau in range(1, self.taumax):
+        for tau in range(1, self.taumax + 1):
             yield self._calc_mean_relaxation(tau)
 
 def calc_orientational_relaxation(object trajectory,
-                                  np.ndarray[INT_t, ndim=2] indexes,
+                                  ARRAY[INT_t, ndim=2] indexes,
                                   int t0=0, int tf=-1, int taumax=20):
     instance = OrientationalRelaxation(
         trajectory, indexes, t0, tf, taumax
@@ -147,14 +131,14 @@ def calc_orientational_relaxation(object trajectory,
 cdef class SurvivalProbability(object):
 
     cdef object trajectory
-    cdef np.ndarray indexes
+    cdef ARRAY indexes
     cdef int nframes
     cdef int taumax
     cdef set exclude
 
     def __init__(object self,
                  object trajectory,
-                 np.ndarray[INT_t, ndim=2] indexes,
+                 ARRAY[INT_t, ndim=2] indexes,
                  int t0=0, int tf=-1, int taumax=10):
         tf = len(trajectory) if tf < 0 else tf
         self.trajectory = trajectory[t0:tf]
@@ -190,7 +174,7 @@ cdef class SurvivalProbability(object):
             yield self._calc_mean_survival(tau)
 
 def calc_survival_probability(object trajectory,
-                              np.ndarray[INT_t, ndim=2] indexes,
+                              ARRAY[INT_t, ndim=2] indexes,
                               int t0=0, int tf=-1, int taumax=20):
     instance = SurvivalProbability(
         trajectory, indexes, t0, tf, taumax
