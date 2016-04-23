@@ -141,7 +141,6 @@ cdef class SurvivalProbability(object):
                  int t0=0, int tf=-1, int taumax=10):
         tf = len(trajectory) if tf < 0 else tf
         self.trajectory = trajectory[t0:tf]
-        self.indexes = indexes[t0:tf]
         self.nframes = len(self.trajectory)
         self.taumax = taumax
 
@@ -160,15 +159,14 @@ cdef class SurvivalProbability(object):
     def _calc_mean_survival_delta(object self, int t, int tau):
         cdef int Ntau = self._count_stayed_atoms(t, tau)
         cdef int Nt   = len(self.indexes[t])
-        return 0 if Nt == 0 else float(Ntau)/float(Nt)
+        return np.nan if Nt == 0 else float(Ntau)/float(Nt)
 
     def _calc_mean_survival(object self, int tau):
         cdef int t
-        cdef list survival_deltas = list(filter(
-            lambda float x: x != 0, (
-                self._calc_mean_survival_delta(t, tau)
-                for t in range(1, self.nframes-tau, tau)
-            )))
+        survival_deltas = np.array([
+            self._calc_mean_survival_delta(t, tau)
+            for t in range(0, self.nframes-tau, tau)
+        ])
         return np.mean(survival_deltas[~np.isnan(survival_deltas)])
 
     def calc(object self):
