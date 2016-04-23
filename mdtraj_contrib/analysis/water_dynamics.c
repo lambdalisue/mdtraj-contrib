@@ -860,10 +860,9 @@ struct __pyx_obj_14mdtraj_contrib_8analysis_14water_dynamics_OrientationalRelaxa
 struct __pyx_obj_14mdtraj_contrib_8analysis_14water_dynamics_SurvivalProbability {
   PyObject_HEAD
   PyObject *trajectory;
-  __pyx_t_14mdtraj_contrib_8analysis_14water_dynamics_ARRAY indexes;
+  PyObject *indexes;
   int nframes;
   int taumax;
-  PyObject *exclude;
 };
 
 
@@ -883,7 +882,7 @@ struct __pyx_obj_14mdtraj_contrib_8analysis_14water_dynamics___pyx_scope_struct_
 };
 
 
-/* "mdtraj_contrib/analysis/water_dynamics.pyx":162
+/* "mdtraj_contrib/analysis/water_dynamics.pyx":165
  *         return 0 if Nt == 0 else float(Ntau)/float(Nt)
  * 
  *     def _calc_mean_survival(object self, int tau):             # <<<<<<<<<<<<<<
@@ -897,24 +896,25 @@ struct __pyx_obj_14mdtraj_contrib_8analysis_14water_dynamics___pyx_scope_struct_
 };
 
 
-/* "mdtraj_contrib/analysis/water_dynamics.pyx":166
+/* "mdtraj_contrib/analysis/water_dynamics.pyx":169
  *         cdef list survival_deltas = list(filter(
  *             lambda float x: x != 0, (
  *                 self._calc_mean_survival_delta(t, tau)             # <<<<<<<<<<<<<<
- *                 for t in range(1, self.nframes-tau)
+ *                 for t in range(1, self.nframes-tau, tau)
  *             )))
  */
 struct __pyx_obj_14mdtraj_contrib_8analysis_14water_dynamics___pyx_scope_struct_2_genexpr {
   PyObject_HEAD
   struct __pyx_obj_14mdtraj_contrib_8analysis_14water_dynamics___pyx_scope_struct_1__calc_mean_survival *__pyx_outer_scope;
   long __pyx_v_t;
-  int __pyx_t_0;
-  long __pyx_t_1;
+  PyObject *__pyx_t_0;
+  Py_ssize_t __pyx_t_1;
+  PyObject *(*__pyx_t_2)(PyObject *);
 };
 
 
-/* "mdtraj_contrib/analysis/water_dynamics.pyx":171
- *         return np.mean(survival_deltas)
+/* "mdtraj_contrib/analysis/water_dynamics.pyx":174
+ *         return np.mean(survival_deltas[~np.isnan(survival_deltas)])
  * 
  *     def calc(object self):             # <<<<<<<<<<<<<<
  *         cdef int tau
@@ -1701,7 +1701,6 @@ static PyObject *__pyx_float_1_0;
 static PyObject *__pyx_int_0;
 static PyObject *__pyx_int_1;
 static PyObject *__pyx_int_2;
-static PyObject *__pyx_int_neg_1;
 static PyObject *__pyx_slice_;
 static PyObject *__pyx_tuple__2;
 static PyObject *__pyx_tuple__3;
@@ -4086,8 +4085,8 @@ static PyObject *__pyx_pf_14mdtraj_contrib_8analysis_14water_dynamics_4calc_orie
   return __pyx_r;
 }
 
-/* "mdtraj_contrib/analysis/water_dynamics.pyx":139
- *     cdef set exclude
+/* "mdtraj_contrib/analysis/water_dynamics.pyx":138
+ *     cdef int taumax
  * 
  *     def __init__(object self,             # <<<<<<<<<<<<<<
  *                  object trajectory,
@@ -4128,7 +4127,7 @@ static int __pyx_pw_14mdtraj_contrib_8analysis_14water_dynamics_19SurvivalProbab
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_indexes)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__init__", 0, 2, 5, 1); __PYX_ERR(0, 139, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("__init__", 0, 2, 5, 1); __PYX_ERR(0, 138, __pyx_L3_error)
         }
         case  2:
         if (kw_args > 0) {
@@ -4147,7 +4146,7 @@ static int __pyx_pw_14mdtraj_contrib_8analysis_14water_dynamics_19SurvivalProbab
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__init__") < 0)) __PYX_ERR(0, 139, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__init__") < 0)) __PYX_ERR(0, 138, __pyx_L3_error)
       }
     } else {
       switch (PyTuple_GET_SIZE(__pyx_args)) {
@@ -4163,30 +4162,30 @@ static int __pyx_pw_14mdtraj_contrib_8analysis_14water_dynamics_19SurvivalProbab
     __pyx_v_trajectory = values[0];
     __pyx_v_indexes = ((__pyx_t_14mdtraj_contrib_8analysis_14water_dynamics_ARRAY)values[1]);
     if (values[2]) {
-      __pyx_v_t0 = __Pyx_PyInt_As_int(values[2]); if (unlikely((__pyx_v_t0 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 142, __pyx_L3_error)
+      __pyx_v_t0 = __Pyx_PyInt_As_int(values[2]); if (unlikely((__pyx_v_t0 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 141, __pyx_L3_error)
     } else {
       __pyx_v_t0 = ((int)0);
     }
     if (values[3]) {
-      __pyx_v_tf = __Pyx_PyInt_As_int(values[3]); if (unlikely((__pyx_v_tf == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 142, __pyx_L3_error)
+      __pyx_v_tf = __Pyx_PyInt_As_int(values[3]); if (unlikely((__pyx_v_tf == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 141, __pyx_L3_error)
     } else {
       __pyx_v_tf = ((int)-1);
     }
     if (values[4]) {
-      __pyx_v_taumax = __Pyx_PyInt_As_int(values[4]); if (unlikely((__pyx_v_taumax == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 142, __pyx_L3_error)
+      __pyx_v_taumax = __Pyx_PyInt_As_int(values[4]); if (unlikely((__pyx_v_taumax == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 141, __pyx_L3_error)
     } else {
       __pyx_v_taumax = ((int)10);
     }
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("__init__", 0, 2, 5, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 139, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("__init__", 0, 2, 5, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 138, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("mdtraj_contrib.analysis.water_dynamics.SurvivalProbability.__init__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return -1;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_indexes), __pyx_ptype_5numpy_ndarray, 1, "indexes", 0))) __PYX_ERR(0, 141, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_indexes), __pyx_ptype_5numpy_ndarray, 1, "indexes", 0))) __PYX_ERR(0, 140, __pyx_L1_error)
   __pyx_r = __pyx_pf_14mdtraj_contrib_8analysis_14water_dynamics_19SurvivalProbability___init__(((struct __pyx_obj_14mdtraj_contrib_8analysis_14water_dynamics_SurvivalProbability *)__pyx_v_self), __pyx_v_trajectory, __pyx_v_indexes, __pyx_v_t0, __pyx_v_tf, __pyx_v_taumax);
 
   /* function exit code */
@@ -4199,6 +4198,9 @@ static int __pyx_pw_14mdtraj_contrib_8analysis_14water_dynamics_19SurvivalProbab
 }
 
 static int __pyx_pf_14mdtraj_contrib_8analysis_14water_dynamics_19SurvivalProbability___init__(struct __pyx_obj_14mdtraj_contrib_8analysis_14water_dynamics_SurvivalProbability *__pyx_v_self, PyObject *__pyx_v_trajectory, __pyx_t_14mdtraj_contrib_8analysis_14water_dynamics_ARRAY __pyx_v_indexes, int __pyx_v_t0, int __pyx_v_tf, int __pyx_v_taumax) {
+  __pyx_t_14mdtraj_contrib_8analysis_14water_dynamics_ARRAY __pyx_v_index = 0;
+  __Pyx_LocalBuf_ND __pyx_pybuffernd_index;
+  __Pyx_Buffer __pyx_pybuffer_index;
   __Pyx_LocalBuf_ND __pyx_pybuffernd_indexes;
   __Pyx_Buffer __pyx_pybuffer_indexes;
   int __pyx_r;
@@ -4206,18 +4208,31 @@ static int __pyx_pf_14mdtraj_contrib_8analysis_14water_dynamics_19SurvivalProbab
   Py_ssize_t __pyx_t_1;
   Py_ssize_t __pyx_t_2;
   PyObject *__pyx_t_3 = NULL;
+  PyObject *__pyx_t_4 = NULL;
+  PyObject *(*__pyx_t_5)(PyObject *);
+  __pyx_t_14mdtraj_contrib_8analysis_14water_dynamics_ARRAY __pyx_t_6 = NULL;
+  int __pyx_t_7;
+  PyObject *__pyx_t_8 = NULL;
+  PyObject *__pyx_t_9 = NULL;
+  PyObject *__pyx_t_10 = NULL;
+  PyObject *__pyx_t_11 = NULL;
+  int __pyx_t_12;
   __Pyx_RefNannySetupContext("__init__", 0);
+  __pyx_pybuffer_index.pybuffer.buf = NULL;
+  __pyx_pybuffer_index.refcount = 0;
+  __pyx_pybuffernd_index.data = NULL;
+  __pyx_pybuffernd_index.rcbuffer = &__pyx_pybuffer_index;
   __pyx_pybuffer_indexes.pybuffer.buf = NULL;
   __pyx_pybuffer_indexes.refcount = 0;
   __pyx_pybuffernd_indexes.data = NULL;
   __pyx_pybuffernd_indexes.rcbuffer = &__pyx_pybuffer_indexes;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_indexes.rcbuffer->pybuffer, (PyObject*)__pyx_v_indexes, &__Pyx_TypeInfo_nn___pyx_t_14mdtraj_contrib_8analysis_14water_dynamics_INT_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) __PYX_ERR(0, 139, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_indexes.rcbuffer->pybuffer, (PyObject*)__pyx_v_indexes, &__Pyx_TypeInfo_nn___pyx_t_14mdtraj_contrib_8analysis_14water_dynamics_INT_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) __PYX_ERR(0, 138, __pyx_L1_error)
   }
   __pyx_pybuffernd_indexes.diminfo[0].strides = __pyx_pybuffernd_indexes.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_indexes.diminfo[0].shape = __pyx_pybuffernd_indexes.rcbuffer->pybuffer.shape[0]; __pyx_pybuffernd_indexes.diminfo[1].strides = __pyx_pybuffernd_indexes.rcbuffer->pybuffer.strides[1]; __pyx_pybuffernd_indexes.diminfo[1].shape = __pyx_pybuffernd_indexes.rcbuffer->pybuffer.shape[1];
 
-  /* "mdtraj_contrib/analysis/water_dynamics.pyx":143
+  /* "mdtraj_contrib/analysis/water_dynamics.pyx":142
  *                  ARRAY[INT_t, ndim=2] indexes,
  *                  int t0=0, int tf=-1, int taumax=10):
  *         tf = len(trajectory) if tf < 0 else tf             # <<<<<<<<<<<<<<
@@ -4225,21 +4240,21 @@ static int __pyx_pf_14mdtraj_contrib_8analysis_14water_dynamics_19SurvivalProbab
  *         self.indexes = indexes[t0:tf]
  */
   if (((__pyx_v_tf < 0) != 0)) {
-    __pyx_t_2 = PyObject_Length(__pyx_v_trajectory); if (unlikely(__pyx_t_2 == -1)) __PYX_ERR(0, 143, __pyx_L1_error)
+    __pyx_t_2 = PyObject_Length(__pyx_v_trajectory); if (unlikely(__pyx_t_2 == -1)) __PYX_ERR(0, 142, __pyx_L1_error)
     __pyx_t_1 = __pyx_t_2;
   } else {
     __pyx_t_1 = __pyx_v_tf;
   }
   __pyx_v_tf = __pyx_t_1;
 
-  /* "mdtraj_contrib/analysis/water_dynamics.pyx":144
+  /* "mdtraj_contrib/analysis/water_dynamics.pyx":143
  *                  int t0=0, int tf=-1, int taumax=10):
  *         tf = len(trajectory) if tf < 0 else tf
  *         self.trajectory = trajectory[t0:tf]             # <<<<<<<<<<<<<<
  *         self.indexes = indexes[t0:tf]
  *         self.nframes = len(self.trajectory)
  */
-  __pyx_t_3 = __Pyx_PyObject_GetSlice(__pyx_v_trajectory, __pyx_v_t0, __pyx_v_tf, NULL, NULL, NULL, 1, 1, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 144, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetSlice(__pyx_v_trajectory, __pyx_v_t0, __pyx_v_tf, NULL, NULL, NULL, 1, 1, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 143, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_GIVEREF(__pyx_t_3);
   __Pyx_GOTREF(__pyx_v_self->trajectory);
@@ -4247,62 +4262,160 @@ static int __pyx_pf_14mdtraj_contrib_8analysis_14water_dynamics_19SurvivalProbab
   __pyx_v_self->trajectory = __pyx_t_3;
   __pyx_t_3 = 0;
 
-  /* "mdtraj_contrib/analysis/water_dynamics.pyx":145
+  /* "mdtraj_contrib/analysis/water_dynamics.pyx":144
  *         tf = len(trajectory) if tf < 0 else tf
  *         self.trajectory = trajectory[t0:tf]
  *         self.indexes = indexes[t0:tf]             # <<<<<<<<<<<<<<
  *         self.nframes = len(self.trajectory)
  *         self.taumax = taumax
  */
-  __pyx_t_3 = __Pyx_PyObject_GetSlice(((PyObject *)__pyx_v_indexes), __pyx_v_t0, __pyx_v_tf, NULL, NULL, NULL, 1, 1, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 145, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetSlice(((PyObject *)__pyx_v_indexes), __pyx_v_t0, __pyx_v_tf, NULL, NULL, NULL, 1, 1, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 144, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (!(likely(((__pyx_t_3) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_3, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 145, __pyx_L1_error)
+  if (!(likely(PyList_CheckExact(__pyx_t_3))||((__pyx_t_3) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_3)->tp_name), 0))) __PYX_ERR(0, 144, __pyx_L1_error)
   __Pyx_GIVEREF(__pyx_t_3);
   __Pyx_GOTREF(__pyx_v_self->indexes);
-  __Pyx_DECREF(((PyObject *)__pyx_v_self->indexes));
-  __pyx_v_self->indexes = ((__pyx_t_14mdtraj_contrib_8analysis_14water_dynamics_ARRAY)__pyx_t_3);
+  __Pyx_DECREF(__pyx_v_self->indexes);
+  __pyx_v_self->indexes = ((PyObject*)__pyx_t_3);
   __pyx_t_3 = 0;
 
-  /* "mdtraj_contrib/analysis/water_dynamics.pyx":146
+  /* "mdtraj_contrib/analysis/water_dynamics.pyx":145
  *         self.trajectory = trajectory[t0:tf]
  *         self.indexes = indexes[t0:tf]
  *         self.nframes = len(self.trajectory)             # <<<<<<<<<<<<<<
  *         self.taumax = taumax
- *         self.exclude = set([-1])
+ * 
  */
   __pyx_t_3 = __pyx_v_self->trajectory;
   __Pyx_INCREF(__pyx_t_3);
-  __pyx_t_1 = PyObject_Length(__pyx_t_3); if (unlikely(__pyx_t_1 == -1)) __PYX_ERR(0, 146, __pyx_L1_error)
+  __pyx_t_1 = PyObject_Length(__pyx_t_3); if (unlikely(__pyx_t_1 == -1)) __PYX_ERR(0, 145, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __pyx_v_self->nframes = __pyx_t_1;
 
-  /* "mdtraj_contrib/analysis/water_dynamics.pyx":147
+  /* "mdtraj_contrib/analysis/water_dynamics.pyx":146
  *         self.indexes = indexes[t0:tf]
  *         self.nframes = len(self.trajectory)
  *         self.taumax = taumax             # <<<<<<<<<<<<<<
- *         self.exclude = set([-1])
  * 
+ *         self.indexes = []
  */
   __pyx_v_self->taumax = __pyx_v_taumax;
 
   /* "mdtraj_contrib/analysis/water_dynamics.pyx":148
- *         self.nframes = len(self.trajectory)
  *         self.taumax = taumax
- *         self.exclude = set([-1])             # <<<<<<<<<<<<<<
+ * 
+ *         self.indexes = []             # <<<<<<<<<<<<<<
+ *         cdef ARRAY[INT_t, ndim=1] index
+ *         for index in indexes[t0:tf]:
+ */
+  __pyx_t_3 = PyList_New(0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 148, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_GIVEREF(__pyx_t_3);
+  __Pyx_GOTREF(__pyx_v_self->indexes);
+  __Pyx_DECREF(__pyx_v_self->indexes);
+  __pyx_v_self->indexes = ((PyObject*)__pyx_t_3);
+  __pyx_t_3 = 0;
+
+  /* "mdtraj_contrib/analysis/water_dynamics.pyx":150
+ *         self.indexes = []
+ *         cdef ARRAY[INT_t, ndim=1] index
+ *         for index in indexes[t0:tf]:             # <<<<<<<<<<<<<<
+ *             self.indexes.append(index[index >= 0])
+ * 
+ */
+  __pyx_t_3 = __Pyx_PyObject_GetSlice(((PyObject *)__pyx_v_indexes), __pyx_v_t0, __pyx_v_tf, NULL, NULL, NULL, 1, 1, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 150, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  if (likely(PyList_CheckExact(__pyx_t_3)) || PyTuple_CheckExact(__pyx_t_3)) {
+    __pyx_t_4 = __pyx_t_3; __Pyx_INCREF(__pyx_t_4); __pyx_t_1 = 0;
+    __pyx_t_5 = NULL;
+  } else {
+    __pyx_t_1 = -1; __pyx_t_4 = PyObject_GetIter(__pyx_t_3); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 150, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_4);
+    __pyx_t_5 = Py_TYPE(__pyx_t_4)->tp_iternext; if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 150, __pyx_L1_error)
+  }
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  for (;;) {
+    if (likely(!__pyx_t_5)) {
+      if (likely(PyList_CheckExact(__pyx_t_4))) {
+        if (__pyx_t_1 >= PyList_GET_SIZE(__pyx_t_4)) break;
+        #if CYTHON_COMPILING_IN_CPYTHON
+        __pyx_t_3 = PyList_GET_ITEM(__pyx_t_4, __pyx_t_1); __Pyx_INCREF(__pyx_t_3); __pyx_t_1++; if (unlikely(0 < 0)) __PYX_ERR(0, 150, __pyx_L1_error)
+        #else
+        __pyx_t_3 = PySequence_ITEM(__pyx_t_4, __pyx_t_1); __pyx_t_1++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 150, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_3);
+        #endif
+      } else {
+        if (__pyx_t_1 >= PyTuple_GET_SIZE(__pyx_t_4)) break;
+        #if CYTHON_COMPILING_IN_CPYTHON
+        __pyx_t_3 = PyTuple_GET_ITEM(__pyx_t_4, __pyx_t_1); __Pyx_INCREF(__pyx_t_3); __pyx_t_1++; if (unlikely(0 < 0)) __PYX_ERR(0, 150, __pyx_L1_error)
+        #else
+        __pyx_t_3 = PySequence_ITEM(__pyx_t_4, __pyx_t_1); __pyx_t_1++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 150, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_3);
+        #endif
+      }
+    } else {
+      __pyx_t_3 = __pyx_t_5(__pyx_t_4);
+      if (unlikely(!__pyx_t_3)) {
+        PyObject* exc_type = PyErr_Occurred();
+        if (exc_type) {
+          if (likely(exc_type == PyExc_StopIteration || PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
+          else __PYX_ERR(0, 150, __pyx_L1_error)
+        }
+        break;
+      }
+      __Pyx_GOTREF(__pyx_t_3);
+    }
+    if (!(likely(((__pyx_t_3) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_3, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 150, __pyx_L1_error)
+    __pyx_t_6 = ((__pyx_t_14mdtraj_contrib_8analysis_14water_dynamics_ARRAY)__pyx_t_3);
+    {
+      __Pyx_BufFmt_StackElem __pyx_stack[1];
+      __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_index.rcbuffer->pybuffer);
+      __pyx_t_7 = __Pyx_GetBufferAndValidate(&__pyx_pybuffernd_index.rcbuffer->pybuffer, (PyObject*)__pyx_t_6, &__Pyx_TypeInfo_nn___pyx_t_14mdtraj_contrib_8analysis_14water_dynamics_INT_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack);
+      if (unlikely(__pyx_t_7 < 0)) {
+        PyErr_Fetch(&__pyx_t_8, &__pyx_t_9, &__pyx_t_10);
+        if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_index.rcbuffer->pybuffer, (PyObject*)__pyx_v_index, &__Pyx_TypeInfo_nn___pyx_t_14mdtraj_contrib_8analysis_14water_dynamics_INT_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) {
+          Py_XDECREF(__pyx_t_8); Py_XDECREF(__pyx_t_9); Py_XDECREF(__pyx_t_10);
+          __Pyx_RaiseBufferFallbackError();
+        } else {
+          PyErr_Restore(__pyx_t_8, __pyx_t_9, __pyx_t_10);
+        }
+      }
+      __pyx_pybuffernd_index.diminfo[0].strides = __pyx_pybuffernd_index.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_index.diminfo[0].shape = __pyx_pybuffernd_index.rcbuffer->pybuffer.shape[0];
+      if (unlikely(__pyx_t_7 < 0)) __PYX_ERR(0, 150, __pyx_L1_error)
+    }
+    __pyx_t_6 = 0;
+    __Pyx_XDECREF_SET(__pyx_v_index, ((__pyx_t_14mdtraj_contrib_8analysis_14water_dynamics_ARRAY)__pyx_t_3));
+    __pyx_t_3 = 0;
+
+    /* "mdtraj_contrib/analysis/water_dynamics.pyx":151
+ *         cdef ARRAY[INT_t, ndim=1] index
+ *         for index in indexes[t0:tf]:
+ *             self.indexes.append(index[index >= 0])             # <<<<<<<<<<<<<<
  * 
  *     def _count_stayed_atoms(object self, int t, int tau):
  */
-  __pyx_t_3 = PySet_New(0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 148, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_3);
-  if (PySet_Add(__pyx_t_3, __pyx_int_neg_1) < 0) __PYX_ERR(0, 148, __pyx_L1_error)
-  __Pyx_GIVEREF(__pyx_t_3);
-  __Pyx_GOTREF(__pyx_v_self->exclude);
-  __Pyx_DECREF(__pyx_v_self->exclude);
-  __pyx_v_self->exclude = ((PyObject*)__pyx_t_3);
-  __pyx_t_3 = 0;
+    if (unlikely(__pyx_v_self->indexes == Py_None)) {
+      PyErr_Format(PyExc_AttributeError, "'NoneType' object has no attribute '%s'", "append");
+      __PYX_ERR(0, 151, __pyx_L1_error)
+    }
+    __pyx_t_3 = PyObject_RichCompare(((PyObject *)__pyx_v_index), __pyx_int_0, Py_GE); __Pyx_XGOTREF(__pyx_t_3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 151, __pyx_L1_error)
+    __pyx_t_11 = PyObject_GetItem(((PyObject *)__pyx_v_index), __pyx_t_3); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 151, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_11);
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    __pyx_t_12 = __Pyx_PyList_Append(__pyx_v_self->indexes, __pyx_t_11); if (unlikely(__pyx_t_12 == -1)) __PYX_ERR(0, 151, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
 
-  /* "mdtraj_contrib/analysis/water_dynamics.pyx":139
- *     cdef set exclude
+    /* "mdtraj_contrib/analysis/water_dynamics.pyx":150
+ *         self.indexes = []
+ *         cdef ARRAY[INT_t, ndim=1] index
+ *         for index in indexes[t0:tf]:             # <<<<<<<<<<<<<<
+ *             self.indexes.append(index[index >= 0])
+ * 
+ */
+  }
+  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+
+  /* "mdtraj_contrib/analysis/water_dynamics.pyx":138
+ *     cdef int taumax
  * 
  *     def __init__(object self,             # <<<<<<<<<<<<<<
  *                  object trajectory,
@@ -4314,24 +4427,29 @@ static int __pyx_pf_14mdtraj_contrib_8analysis_14water_dynamics_19SurvivalProbab
   goto __pyx_L0;
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_XDECREF(__pyx_t_11);
   { PyObject *__pyx_type, *__pyx_value, *__pyx_tb;
     __Pyx_PyThreadState_declare
     __Pyx_PyThreadState_assign
     __Pyx_ErrFetch(&__pyx_type, &__pyx_value, &__pyx_tb);
+    __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_index.rcbuffer->pybuffer);
     __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_indexes.rcbuffer->pybuffer);
   __Pyx_ErrRestore(__pyx_type, __pyx_value, __pyx_tb);}
   __Pyx_AddTraceback("mdtraj_contrib.analysis.water_dynamics.SurvivalProbability.__init__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = -1;
   goto __pyx_L2;
   __pyx_L0:;
+  __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_index.rcbuffer->pybuffer);
   __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_indexes.rcbuffer->pybuffer);
   __pyx_L2:;
+  __Pyx_XDECREF((PyObject *)__pyx_v_index);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-/* "mdtraj_contrib/analysis/water_dynamics.pyx":150
- *         self.exclude = set([-1])
+/* "mdtraj_contrib/analysis/water_dynamics.pyx":153
+ *             self.indexes.append(index[index >= 0])
  * 
  *     def _count_stayed_atoms(object self, int t, int tau):             # <<<<<<<<<<<<<<
  *         cdef int dt
@@ -4366,11 +4484,11 @@ static PyObject *__pyx_pw_14mdtraj_contrib_8analysis_14water_dynamics_19Survival
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_tau)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("_count_stayed_atoms", 1, 2, 2, 1); __PYX_ERR(0, 150, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("_count_stayed_atoms", 1, 2, 2, 1); __PYX_ERR(0, 153, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "_count_stayed_atoms") < 0)) __PYX_ERR(0, 150, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "_count_stayed_atoms") < 0)) __PYX_ERR(0, 153, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -4378,12 +4496,12 @@ static PyObject *__pyx_pw_14mdtraj_contrib_8analysis_14water_dynamics_19Survival
       values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
       values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
     }
-    __pyx_v_t = __Pyx_PyInt_As_int(values[0]); if (unlikely((__pyx_v_t == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 150, __pyx_L3_error)
-    __pyx_v_tau = __Pyx_PyInt_As_int(values[1]); if (unlikely((__pyx_v_tau == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 150, __pyx_L3_error)
+    __pyx_v_t = __Pyx_PyInt_As_int(values[0]); if (unlikely((__pyx_v_t == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 153, __pyx_L3_error)
+    __pyx_v_tau = __Pyx_PyInt_As_int(values[1]); if (unlikely((__pyx_v_tau == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 153, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("_count_stayed_atoms", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 150, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("_count_stayed_atoms", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 153, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("mdtraj_contrib.analysis.water_dynamics.SurvivalProbability._count_stayed_atoms", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -4409,31 +4527,39 @@ static PyObject *__pyx_pf_14mdtraj_contrib_8analysis_14water_dynamics_19Survival
   int __pyx_t_6;
   __Pyx_RefNannySetupContext("_count_stayed_atoms", 0);
 
-  /* "mdtraj_contrib/analysis/water_dynamics.pyx":152
+  /* "mdtraj_contrib/analysis/water_dynamics.pyx":155
  *     def _count_stayed_atoms(object self, int t, int tau):
  *         cdef int dt
  *         cdef set stayed = set(self.indexes[t])             # <<<<<<<<<<<<<<
  *         for dt in range(1, min(tau, len(self.indexes)-t)):
  *             stayed &= set(self.indexes[t+dt])
  */
-  __pyx_t_1 = __Pyx_GetItemInt(((PyObject *)__pyx_v_self->indexes), __pyx_v_t, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 152, __pyx_L1_error)
+  if (unlikely(__pyx_v_self->indexes == Py_None)) {
+    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+    __PYX_ERR(0, 155, __pyx_L1_error)
+  }
+  __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_self->indexes, __pyx_v_t, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 155, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = PySet_New(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 152, __pyx_L1_error)
+  __pyx_t_2 = PySet_New(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 155, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_stayed = ((PyObject*)__pyx_t_2);
   __pyx_t_2 = 0;
 
-  /* "mdtraj_contrib/analysis/water_dynamics.pyx":153
+  /* "mdtraj_contrib/analysis/water_dynamics.pyx":156
  *         cdef int dt
  *         cdef set stayed = set(self.indexes[t])
  *         for dt in range(1, min(tau, len(self.indexes)-t)):             # <<<<<<<<<<<<<<
  *             stayed &= set(self.indexes[t+dt])
- *         return len(stayed - self.exclude)
+ *         return len(stayed)
  */
-  __pyx_t_2 = ((PyObject *)__pyx_v_self->indexes);
+  __pyx_t_2 = __pyx_v_self->indexes;
   __Pyx_INCREF(__pyx_t_2);
-  __pyx_t_3 = PyObject_Length(__pyx_t_2); if (unlikely(__pyx_t_3 == -1)) __PYX_ERR(0, 153, __pyx_L1_error)
+  if (unlikely(__pyx_t_2 == Py_None)) {
+    PyErr_SetString(PyExc_TypeError, "object of type 'NoneType' has no len()");
+    __PYX_ERR(0, 156, __pyx_L1_error)
+  }
+  __pyx_t_3 = PyList_GET_SIZE(__pyx_t_2); if (unlikely(__pyx_t_3 == -1)) __PYX_ERR(0, 156, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_t_4 = (__pyx_t_3 - __pyx_v_t);
   __pyx_t_5 = __pyx_v_tau;
@@ -4446,46 +4572,47 @@ static PyObject *__pyx_pf_14mdtraj_contrib_8analysis_14water_dynamics_19Survival
   for (__pyx_t_5 = 1; __pyx_t_5 < __pyx_t_4; __pyx_t_5+=1) {
     __pyx_v_dt = __pyx_t_5;
 
-    /* "mdtraj_contrib/analysis/water_dynamics.pyx":154
+    /* "mdtraj_contrib/analysis/water_dynamics.pyx":157
  *         cdef set stayed = set(self.indexes[t])
  *         for dt in range(1, min(tau, len(self.indexes)-t)):
  *             stayed &= set(self.indexes[t+dt])             # <<<<<<<<<<<<<<
- *         return len(stayed - self.exclude)
+ *         return len(stayed)
  * 
  */
+    if (unlikely(__pyx_v_self->indexes == Py_None)) {
+      PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+      __PYX_ERR(0, 157, __pyx_L1_error)
+    }
     __pyx_t_6 = (__pyx_v_t + __pyx_v_dt);
-    __pyx_t_2 = __Pyx_GetItemInt(((PyObject *)__pyx_v_self->indexes), __pyx_t_6, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 154, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_GetItemInt_List(__pyx_v_self->indexes, __pyx_t_6, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 157, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_1 = PySet_New(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 154, __pyx_L1_error)
+    __pyx_t_1 = PySet_New(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 157, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_2 = PyNumber_InPlaceAnd(__pyx_v_stayed, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 154, __pyx_L1_error)
+    __pyx_t_2 = PyNumber_InPlaceAnd(__pyx_v_stayed, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 157, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __Pyx_DECREF_SET(__pyx_v_stayed, ((PyObject*)__pyx_t_2));
     __pyx_t_2 = 0;
   }
 
-  /* "mdtraj_contrib/analysis/water_dynamics.pyx":155
+  /* "mdtraj_contrib/analysis/water_dynamics.pyx":158
  *         for dt in range(1, min(tau, len(self.indexes)-t)):
  *             stayed &= set(self.indexes[t+dt])
- *         return len(stayed - self.exclude)             # <<<<<<<<<<<<<<
+ *         return len(stayed)             # <<<<<<<<<<<<<<
  * 
  *     def _calc_mean_survival_delta(object self, int t, int tau):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_2 = PyNumber_Subtract(__pyx_v_stayed, __pyx_v_self->exclude); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 155, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_4 = PyObject_Length(__pyx_t_2); if (unlikely(__pyx_t_4 == -1)) __PYX_ERR(0, 155, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = PyInt_FromSsize_t(__pyx_t_4); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 155, __pyx_L1_error)
+  __pyx_t_4 = PySet_GET_SIZE(__pyx_v_stayed); if (unlikely(__pyx_t_4 == -1)) __PYX_ERR(0, 158, __pyx_L1_error)
+  __pyx_t_2 = PyInt_FromSsize_t(__pyx_t_4); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 158, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_r = __pyx_t_2;
   __pyx_t_2 = 0;
   goto __pyx_L0;
 
-  /* "mdtraj_contrib/analysis/water_dynamics.pyx":150
- *         self.exclude = set([-1])
+  /* "mdtraj_contrib/analysis/water_dynamics.pyx":153
+ *             self.indexes.append(index[index >= 0])
  * 
  *     def _count_stayed_atoms(object self, int t, int tau):             # <<<<<<<<<<<<<<
  *         cdef int dt
@@ -4505,12 +4632,12 @@ static PyObject *__pyx_pf_14mdtraj_contrib_8analysis_14water_dynamics_19Survival
   return __pyx_r;
 }
 
-/* "mdtraj_contrib/analysis/water_dynamics.pyx":157
- *         return len(stayed - self.exclude)
+/* "mdtraj_contrib/analysis/water_dynamics.pyx":160
+ *         return len(stayed)
  * 
  *     def _calc_mean_survival_delta(object self, int t, int tau):             # <<<<<<<<<<<<<<
  *         cdef int Ntau = self._count_stayed_atoms(t, tau)
- *         cdef int Nt   = len(set(self.indexes[t]) - self.exclude)
+ *         cdef int Nt   = len(self.indexes[t])
  */
 
 /* Python wrapper */
@@ -4541,11 +4668,11 @@ static PyObject *__pyx_pw_14mdtraj_contrib_8analysis_14water_dynamics_19Survival
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_tau)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("_calc_mean_survival_delta", 1, 2, 2, 1); __PYX_ERR(0, 157, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("_calc_mean_survival_delta", 1, 2, 2, 1); __PYX_ERR(0, 160, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "_calc_mean_survival_delta") < 0)) __PYX_ERR(0, 157, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "_calc_mean_survival_delta") < 0)) __PYX_ERR(0, 160, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -4553,12 +4680,12 @@ static PyObject *__pyx_pw_14mdtraj_contrib_8analysis_14water_dynamics_19Survival
       values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
       values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
     }
-    __pyx_v_t = __Pyx_PyInt_As_int(values[0]); if (unlikely((__pyx_v_t == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 157, __pyx_L3_error)
-    __pyx_v_tau = __Pyx_PyInt_As_int(values[1]); if (unlikely((__pyx_v_tau == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 157, __pyx_L3_error)
+    __pyx_v_t = __Pyx_PyInt_As_int(values[0]); if (unlikely((__pyx_v_t == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 160, __pyx_L3_error)
+    __pyx_v_tau = __Pyx_PyInt_As_int(values[1]); if (unlikely((__pyx_v_tau == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 160, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("_calc_mean_survival_delta", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 157, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("_calc_mean_survival_delta", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 160, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("mdtraj_contrib.analysis.water_dynamics.SurvivalProbability._calc_mean_survival_delta", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -4586,18 +4713,18 @@ static PyObject *__pyx_pf_14mdtraj_contrib_8analysis_14water_dynamics_19Survival
   int __pyx_t_8;
   __Pyx_RefNannySetupContext("_calc_mean_survival_delta", 0);
 
-  /* "mdtraj_contrib/analysis/water_dynamics.pyx":158
+  /* "mdtraj_contrib/analysis/water_dynamics.pyx":161
  * 
  *     def _calc_mean_survival_delta(object self, int t, int tau):
  *         cdef int Ntau = self._count_stayed_atoms(t, tau)             # <<<<<<<<<<<<<<
- *         cdef int Nt   = len(set(self.indexes[t]) - self.exclude)
+ *         cdef int Nt   = len(self.indexes[t])
  *         return 0 if Nt == 0 else float(Ntau)/float(Nt)
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_count_stayed_atoms); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 158, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_count_stayed_atoms); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 161, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_v_t); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 158, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_v_t); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 161, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_4 = __Pyx_PyInt_From_int(__pyx_v_tau); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 158, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyInt_From_int(__pyx_v_tau); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 161, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __pyx_t_5 = NULL;
   __pyx_t_6 = 0;
@@ -4611,7 +4738,7 @@ static PyObject *__pyx_pf_14mdtraj_contrib_8analysis_14water_dynamics_19Survival
       __pyx_t_6 = 1;
     }
   }
-  __pyx_t_7 = PyTuple_New(2+__pyx_t_6); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 158, __pyx_L1_error)
+  __pyx_t_7 = PyTuple_New(2+__pyx_t_6); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 161, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
   if (__pyx_t_5) {
     __Pyx_GIVEREF(__pyx_t_5); PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_t_5); __pyx_t_5 = NULL;
@@ -4622,36 +4749,34 @@ static PyObject *__pyx_pf_14mdtraj_contrib_8analysis_14water_dynamics_19Survival
   PyTuple_SET_ITEM(__pyx_t_7, 1+__pyx_t_6, __pyx_t_4);
   __pyx_t_3 = 0;
   __pyx_t_4 = 0;
-  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_7, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 158, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_7, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 161, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_8 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_8 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 158, __pyx_L1_error)
+  __pyx_t_8 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_8 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 161, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_Ntau = __pyx_t_8;
 
-  /* "mdtraj_contrib/analysis/water_dynamics.pyx":159
+  /* "mdtraj_contrib/analysis/water_dynamics.pyx":162
  *     def _calc_mean_survival_delta(object self, int t, int tau):
  *         cdef int Ntau = self._count_stayed_atoms(t, tau)
- *         cdef int Nt   = len(set(self.indexes[t]) - self.exclude)             # <<<<<<<<<<<<<<
+ *         cdef int Nt   = len(self.indexes[t])             # <<<<<<<<<<<<<<
  *         return 0 if Nt == 0 else float(Ntau)/float(Nt)
  * 
  */
-  __pyx_t_1 = __Pyx_GetItemInt(((PyObject *)__pyx_v_self->indexes), __pyx_v_t, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 159, __pyx_L1_error)
+  if (unlikely(__pyx_v_self->indexes == Py_None)) {
+    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+    __PYX_ERR(0, 162, __pyx_L1_error)
+  }
+  __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_self->indexes, __pyx_v_t, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 162, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = PySet_New(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 159, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = PyNumber_Subtract(__pyx_t_2, __pyx_v_self->exclude); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 159, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_6 = PyObject_Length(__pyx_t_1); if (unlikely(__pyx_t_6 == -1)) __PYX_ERR(0, 159, __pyx_L1_error)
+  __pyx_t_6 = PyObject_Length(__pyx_t_1); if (unlikely(__pyx_t_6 == -1)) __PYX_ERR(0, 162, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_Nt = __pyx_t_6;
 
-  /* "mdtraj_contrib/analysis/water_dynamics.pyx":160
+  /* "mdtraj_contrib/analysis/water_dynamics.pyx":163
  *         cdef int Ntau = self._count_stayed_atoms(t, tau)
- *         cdef int Nt   = len(set(self.indexes[t]) - self.exclude)
+ *         cdef int Nt   = len(self.indexes[t])
  *         return 0 if Nt == 0 else float(Ntau)/float(Nt)             # <<<<<<<<<<<<<<
  * 
  *     def _calc_mean_survival(object self, int tau):
@@ -4663,9 +4788,9 @@ static PyObject *__pyx_pf_14mdtraj_contrib_8analysis_14water_dynamics_19Survival
   } else {
     if (unlikely(((double)__pyx_v_Nt) == 0)) {
       PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-      __PYX_ERR(0, 160, __pyx_L1_error)
+      __PYX_ERR(0, 163, __pyx_L1_error)
     }
-    __pyx_t_2 = PyFloat_FromDouble((((double)__pyx_v_Ntau) / ((double)__pyx_v_Nt))); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 160, __pyx_L1_error)
+    __pyx_t_2 = PyFloat_FromDouble((((double)__pyx_v_Ntau) / ((double)__pyx_v_Nt))); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 163, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __pyx_t_1 = __pyx_t_2;
     __pyx_t_2 = 0;
@@ -4674,12 +4799,12 @@ static PyObject *__pyx_pf_14mdtraj_contrib_8analysis_14water_dynamics_19Survival
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "mdtraj_contrib/analysis/water_dynamics.pyx":157
- *         return len(stayed - self.exclude)
+  /* "mdtraj_contrib/analysis/water_dynamics.pyx":160
+ *         return len(stayed)
  * 
  *     def _calc_mean_survival_delta(object self, int t, int tau):             # <<<<<<<<<<<<<<
  *         cdef int Ntau = self._count_stayed_atoms(t, tau)
- *         cdef int Nt   = len(set(self.indexes[t]) - self.exclude)
+ *         cdef int Nt   = len(self.indexes[t])
  */
 
   /* function exit code */
@@ -4698,7 +4823,7 @@ static PyObject *__pyx_pf_14mdtraj_contrib_8analysis_14water_dynamics_19Survival
   return __pyx_r;
 }
 
-/* "mdtraj_contrib/analysis/water_dynamics.pyx":162
+/* "mdtraj_contrib/analysis/water_dynamics.pyx":165
  *         return 0 if Nt == 0 else float(Ntau)/float(Nt)
  * 
  *     def _calc_mean_survival(object self, int tau):             # <<<<<<<<<<<<<<
@@ -4714,7 +4839,7 @@ static PyObject *__pyx_pw_14mdtraj_contrib_8analysis_14water_dynamics_19Survival
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("_calc_mean_survival (wrapper)", 0);
   assert(__pyx_arg_tau); {
-    __pyx_v_tau = __Pyx_PyInt_As_int(__pyx_arg_tau); if (unlikely((__pyx_v_tau == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 162, __pyx_L3_error)
+    __pyx_v_tau = __Pyx_PyInt_As_int(__pyx_arg_tau); if (unlikely((__pyx_v_tau == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 165, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -4729,12 +4854,12 @@ static PyObject *__pyx_pw_14mdtraj_contrib_8analysis_14water_dynamics_19Survival
   return __pyx_r;
 }
 
-/* "mdtraj_contrib/analysis/water_dynamics.pyx":165
+/* "mdtraj_contrib/analysis/water_dynamics.pyx":168
  *         cdef int t
  *         cdef list survival_deltas = list(filter(
  *             lambda float x: x != 0, (             # <<<<<<<<<<<<<<
  *                 self._calc_mean_survival_delta(t, tau)
- *                 for t in range(1, self.nframes-tau)
+ *                 for t in range(1, self.nframes-tau, tau)
  */
 
 /* Python wrapper */
@@ -4746,7 +4871,7 @@ static PyObject *__pyx_pw_14mdtraj_contrib_8analysis_14water_dynamics_19Survival
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("lambda (wrapper)", 0);
   assert(__pyx_arg_x); {
-    __pyx_v_x = __pyx_PyFloat_AsFloat(__pyx_arg_x); if (unlikely((__pyx_v_x == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 165, __pyx_L3_error)
+    __pyx_v_x = __pyx_PyFloat_AsFloat(__pyx_arg_x); if (unlikely((__pyx_v_x == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 168, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -4767,7 +4892,7 @@ static PyObject *__pyx_lambda_funcdef_lambda(CYTHON_UNUSED PyObject *__pyx_self,
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("lambda", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyBool_FromLong((__pyx_v_x != 0.0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 165, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyBool_FromLong((__pyx_v_x != 0.0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 168, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -4785,11 +4910,11 @@ static PyObject *__pyx_lambda_funcdef_lambda(CYTHON_UNUSED PyObject *__pyx_self,
 }
 static PyObject *__pyx_gb_14mdtraj_contrib_8analysis_14water_dynamics_19SurvivalProbability_19_calc_mean_survival_3generator2(__pyx_CoroutineObject *__pyx_generator, PyObject *__pyx_sent_value); /* proto */
 
-/* "mdtraj_contrib/analysis/water_dynamics.pyx":166
+/* "mdtraj_contrib/analysis/water_dynamics.pyx":169
  *         cdef list survival_deltas = list(filter(
  *             lambda float x: x != 0, (
  *                 self._calc_mean_survival_delta(t, tau)             # <<<<<<<<<<<<<<
- *                 for t in range(1, self.nframes-tau)
+ *                 for t in range(1, self.nframes-tau, tau)
  *             )))
  */
 
@@ -4808,7 +4933,7 @@ static PyObject *__pyx_pf_14mdtraj_contrib_8analysis_14water_dynamics_19Survival
   __Pyx_INCREF(((PyObject *)__pyx_cur_scope->__pyx_outer_scope));
   __Pyx_GIVEREF(__pyx_cur_scope->__pyx_outer_scope);
   {
-    __pyx_CoroutineObject *gen = __Pyx_Generator_New((__pyx_coroutine_body_t) __pyx_gb_14mdtraj_contrib_8analysis_14water_dynamics_19SurvivalProbability_19_calc_mean_survival_3generator2, (PyObject *) __pyx_cur_scope, __pyx_n_s_genexpr, __pyx_n_s_calc_mean_survival_locals_genex); if (unlikely(!gen)) __PYX_ERR(0, 166, __pyx_L1_error)
+    __pyx_CoroutineObject *gen = __Pyx_Generator_New((__pyx_coroutine_body_t) __pyx_gb_14mdtraj_contrib_8analysis_14water_dynamics_19SurvivalProbability_19_calc_mean_survival_3generator2, (PyObject *) __pyx_cur_scope, __pyx_n_s_genexpr, __pyx_n_s_calc_mean_survival_locals_genex); if (unlikely(!gen)) __PYX_ERR(0, 169, __pyx_L1_error)
     __Pyx_DECREF(__pyx_cur_scope);
     __Pyx_RefNannyFinishContext();
     return (PyObject *) gen;
@@ -4828,15 +4953,17 @@ static PyObject *__pyx_gb_14mdtraj_contrib_8analysis_14water_dynamics_19Survival
 {
   struct __pyx_obj_14mdtraj_contrib_8analysis_14water_dynamics___pyx_scope_struct_2_genexpr *__pyx_cur_scope = ((struct __pyx_obj_14mdtraj_contrib_8analysis_14water_dynamics___pyx_scope_struct_2_genexpr *)__pyx_generator->closure);
   PyObject *__pyx_r = NULL;
-  int __pyx_t_1;
-  long __pyx_t_2;
+  PyObject *__pyx_t_1 = NULL;
+  PyObject *__pyx_t_2 = NULL;
   PyObject *__pyx_t_3 = NULL;
-  PyObject *__pyx_t_4 = NULL;
-  PyObject *__pyx_t_5 = NULL;
-  PyObject *__pyx_t_6 = NULL;
+  Py_ssize_t __pyx_t_4;
+  PyObject *(*__pyx_t_5)(PyObject *);
+  long __pyx_t_6;
   PyObject *__pyx_t_7 = NULL;
-  Py_ssize_t __pyx_t_8;
+  PyObject *__pyx_t_8 = NULL;
   PyObject *__pyx_t_9 = NULL;
+  Py_ssize_t __pyx_t_10;
+  PyObject *__pyx_t_11 = NULL;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("None", 0);
   switch (__pyx_generator->resume_label) {
@@ -4847,86 +4974,167 @@ static PyObject *__pyx_gb_14mdtraj_contrib_8analysis_14water_dynamics_19Survival
     return NULL;
   }
   __pyx_L3_first_run:;
-  if (unlikely(!__pyx_sent_value)) __PYX_ERR(0, 166, __pyx_L1_error)
+  if (unlikely(!__pyx_sent_value)) __PYX_ERR(0, 169, __pyx_L1_error)
 
-  /* "mdtraj_contrib/analysis/water_dynamics.pyx":167
+  /* "mdtraj_contrib/analysis/water_dynamics.pyx":170
  *             lambda float x: x != 0, (
  *                 self._calc_mean_survival_delta(t, tau)
- *                 for t in range(1, self.nframes-tau)             # <<<<<<<<<<<<<<
+ *                 for t in range(1, self.nframes-tau, tau)             # <<<<<<<<<<<<<<
  *             )))
- *         return np.mean(survival_deltas)
+ *         return np.mean(survival_deltas[~np.isnan(survival_deltas)])
  */
-  if (unlikely(!__pyx_cur_scope->__pyx_outer_scope->__pyx_v_self)) { __Pyx_RaiseClosureNameError("self"); __PYX_ERR(0, 167, __pyx_L1_error) }
-  __pyx_t_1 = (__pyx_cur_scope->__pyx_outer_scope->__pyx_v_self->nframes - __pyx_cur_scope->__pyx_outer_scope->__pyx_v_tau);
-  for (__pyx_t_2 = 1; __pyx_t_2 < __pyx_t_1; __pyx_t_2+=1) {
-    __pyx_cur_scope->__pyx_v_t = __pyx_t_2;
+  if (unlikely(!__pyx_cur_scope->__pyx_outer_scope->__pyx_v_self)) { __Pyx_RaiseClosureNameError("self"); __PYX_ERR(0, 170, __pyx_L1_error) }
+  __pyx_t_1 = __Pyx_PyInt_From_int((__pyx_cur_scope->__pyx_outer_scope->__pyx_v_self->nframes - __pyx_cur_scope->__pyx_outer_scope->__pyx_v_tau)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 170, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_cur_scope->__pyx_outer_scope->__pyx_v_tau); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 170, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_3 = PyTuple_New(3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 170, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_INCREF(__pyx_int_1);
+  __Pyx_GIVEREF(__pyx_int_1);
+  PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_int_1);
+  __Pyx_GIVEREF(__pyx_t_1);
+  PyTuple_SET_ITEM(__pyx_t_3, 1, __pyx_t_1);
+  __Pyx_GIVEREF(__pyx_t_2);
+  PyTuple_SET_ITEM(__pyx_t_3, 2, __pyx_t_2);
+  __pyx_t_1 = 0;
+  __pyx_t_2 = 0;
+  __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_range, __pyx_t_3, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 170, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  if (likely(PyList_CheckExact(__pyx_t_2)) || PyTuple_CheckExact(__pyx_t_2)) {
+    __pyx_t_3 = __pyx_t_2; __Pyx_INCREF(__pyx_t_3); __pyx_t_4 = 0;
+    __pyx_t_5 = NULL;
+  } else {
+    __pyx_t_4 = -1; __pyx_t_3 = PyObject_GetIter(__pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 170, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_5 = Py_TYPE(__pyx_t_3)->tp_iternext; if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 170, __pyx_L1_error)
+  }
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  for (;;) {
+    if (likely(!__pyx_t_5)) {
+      if (likely(PyList_CheckExact(__pyx_t_3))) {
+        if (__pyx_t_4 >= PyList_GET_SIZE(__pyx_t_3)) break;
+        #if CYTHON_COMPILING_IN_CPYTHON
+        __pyx_t_2 = PyList_GET_ITEM(__pyx_t_3, __pyx_t_4); __Pyx_INCREF(__pyx_t_2); __pyx_t_4++; if (unlikely(0 < 0)) __PYX_ERR(0, 170, __pyx_L1_error)
+        #else
+        __pyx_t_2 = PySequence_ITEM(__pyx_t_3, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 170, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_2);
+        #endif
+      } else {
+        if (__pyx_t_4 >= PyTuple_GET_SIZE(__pyx_t_3)) break;
+        #if CYTHON_COMPILING_IN_CPYTHON
+        __pyx_t_2 = PyTuple_GET_ITEM(__pyx_t_3, __pyx_t_4); __Pyx_INCREF(__pyx_t_2); __pyx_t_4++; if (unlikely(0 < 0)) __PYX_ERR(0, 170, __pyx_L1_error)
+        #else
+        __pyx_t_2 = PySequence_ITEM(__pyx_t_3, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 170, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_2);
+        #endif
+      }
+    } else {
+      __pyx_t_2 = __pyx_t_5(__pyx_t_3);
+      if (unlikely(!__pyx_t_2)) {
+        PyObject* exc_type = PyErr_Occurred();
+        if (exc_type) {
+          if (likely(exc_type == PyExc_StopIteration || PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
+          else __PYX_ERR(0, 170, __pyx_L1_error)
+        }
+        break;
+      }
+      __Pyx_GOTREF(__pyx_t_2);
+    }
+    __pyx_t_6 = __Pyx_PyInt_As_long(__pyx_t_2); if (unlikely((__pyx_t_6 == (long)-1) && PyErr_Occurred())) __PYX_ERR(0, 170, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __pyx_cur_scope->__pyx_v_t = __pyx_t_6;
 
-    /* "mdtraj_contrib/analysis/water_dynamics.pyx":166
+    /* "mdtraj_contrib/analysis/water_dynamics.pyx":169
  *         cdef list survival_deltas = list(filter(
  *             lambda float x: x != 0, (
  *                 self._calc_mean_survival_delta(t, tau)             # <<<<<<<<<<<<<<
- *                 for t in range(1, self.nframes-tau)
+ *                 for t in range(1, self.nframes-tau, tau)
  *             )))
  */
-    if (unlikely(!__pyx_cur_scope->__pyx_outer_scope->__pyx_v_self)) { __Pyx_RaiseClosureNameError("self"); __PYX_ERR(0, 166, __pyx_L1_error) }
-    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_cur_scope->__pyx_outer_scope->__pyx_v_self), __pyx_n_s_calc_mean_survival_delta); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 166, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_5 = __Pyx_PyInt_From_long(__pyx_cur_scope->__pyx_v_t); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 166, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_6 = __Pyx_PyInt_From_int(__pyx_cur_scope->__pyx_outer_scope->__pyx_v_tau); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 166, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_6);
-    __pyx_t_7 = NULL;
-    __pyx_t_8 = 0;
-    if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_4))) {
-      __pyx_t_7 = PyMethod_GET_SELF(__pyx_t_4);
-      if (likely(__pyx_t_7)) {
-        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_4);
-        __Pyx_INCREF(__pyx_t_7);
+    if (unlikely(!__pyx_cur_scope->__pyx_outer_scope->__pyx_v_self)) { __Pyx_RaiseClosureNameError("self"); __PYX_ERR(0, 169, __pyx_L1_error) }
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_cur_scope->__pyx_outer_scope->__pyx_v_self), __pyx_n_s_calc_mean_survival_delta); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 169, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __pyx_t_7 = __Pyx_PyInt_From_long(__pyx_cur_scope->__pyx_v_t); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 169, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_7);
+    __pyx_t_8 = __Pyx_PyInt_From_int(__pyx_cur_scope->__pyx_outer_scope->__pyx_v_tau); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 169, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_8);
+    __pyx_t_9 = NULL;
+    __pyx_t_10 = 0;
+    if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_1))) {
+      __pyx_t_9 = PyMethod_GET_SELF(__pyx_t_1);
+      if (likely(__pyx_t_9)) {
+        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_1);
+        __Pyx_INCREF(__pyx_t_9);
         __Pyx_INCREF(function);
-        __Pyx_DECREF_SET(__pyx_t_4, function);
-        __pyx_t_8 = 1;
+        __Pyx_DECREF_SET(__pyx_t_1, function);
+        __pyx_t_10 = 1;
       }
     }
-    __pyx_t_9 = PyTuple_New(2+__pyx_t_8); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 166, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_9);
-    if (__pyx_t_7) {
-      __Pyx_GIVEREF(__pyx_t_7); PyTuple_SET_ITEM(__pyx_t_9, 0, __pyx_t_7); __pyx_t_7 = NULL;
+    __pyx_t_11 = PyTuple_New(2+__pyx_t_10); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 169, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_11);
+    if (__pyx_t_9) {
+      __Pyx_GIVEREF(__pyx_t_9); PyTuple_SET_ITEM(__pyx_t_11, 0, __pyx_t_9); __pyx_t_9 = NULL;
     }
-    __Pyx_GIVEREF(__pyx_t_5);
-    PyTuple_SET_ITEM(__pyx_t_9, 0+__pyx_t_8, __pyx_t_5);
-    __Pyx_GIVEREF(__pyx_t_6);
-    PyTuple_SET_ITEM(__pyx_t_9, 1+__pyx_t_8, __pyx_t_6);
-    __pyx_t_5 = 0;
-    __pyx_t_6 = 0;
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_9, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 166, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_3);
-    __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_r = __pyx_t_3;
-    __pyx_t_3 = 0;
-    __pyx_cur_scope->__pyx_t_0 = __pyx_t_1;
-    __pyx_cur_scope->__pyx_t_1 = __pyx_t_2;
+    __Pyx_GIVEREF(__pyx_t_7);
+    PyTuple_SET_ITEM(__pyx_t_11, 0+__pyx_t_10, __pyx_t_7);
+    __Pyx_GIVEREF(__pyx_t_8);
+    PyTuple_SET_ITEM(__pyx_t_11, 1+__pyx_t_10, __pyx_t_8);
+    __pyx_t_7 = 0;
+    __pyx_t_8 = 0;
+    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_11, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 169, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    __pyx_r = __pyx_t_2;
+    __pyx_t_2 = 0;
+    __Pyx_XGIVEREF(__pyx_t_3);
+    __pyx_cur_scope->__pyx_t_0 = __pyx_t_3;
+    __pyx_cur_scope->__pyx_t_1 = __pyx_t_4;
+    __pyx_cur_scope->__pyx_t_2 = __pyx_t_5;
     __Pyx_XGIVEREF(__pyx_r);
     __Pyx_RefNannyFinishContext();
     /* return from generator, yielding value */
     __pyx_generator->resume_label = 1;
     return __pyx_r;
     __pyx_L6_resume_from_yield:;
-    __pyx_t_1 = __pyx_cur_scope->__pyx_t_0;
-    __pyx_t_2 = __pyx_cur_scope->__pyx_t_1;
-    if (unlikely(!__pyx_sent_value)) __PYX_ERR(0, 166, __pyx_L1_error)
+    __pyx_t_3 = __pyx_cur_scope->__pyx_t_0;
+    __pyx_cur_scope->__pyx_t_0 = 0;
+    __Pyx_XGOTREF(__pyx_t_3);
+    __pyx_t_4 = __pyx_cur_scope->__pyx_t_1;
+    __pyx_t_5 = __pyx_cur_scope->__pyx_t_2;
+    if (unlikely(!__pyx_sent_value)) __PYX_ERR(0, 169, __pyx_L1_error)
+
+    /* "mdtraj_contrib/analysis/water_dynamics.pyx":170
+ *             lambda float x: x != 0, (
+ *                 self._calc_mean_survival_delta(t, tau)
+ *                 for t in range(1, self.nframes-tau, tau)             # <<<<<<<<<<<<<<
+ *             )))
+ *         return np.mean(survival_deltas[~np.isnan(survival_deltas)])
+ */
   }
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+
+  /* "mdtraj_contrib/analysis/water_dynamics.pyx":169
+ *         cdef list survival_deltas = list(filter(
+ *             lambda float x: x != 0, (
+ *                 self._calc_mean_survival_delta(t, tau)             # <<<<<<<<<<<<<<
+ *                 for t in range(1, self.nframes-tau, tau)
+ *             )))
+ */
 
   /* function exit code */
   PyErr_SetNone(PyExc_StopIteration);
   goto __pyx_L0;
   __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_3);
-  __Pyx_XDECREF(__pyx_t_4);
-  __Pyx_XDECREF(__pyx_t_5);
-  __Pyx_XDECREF(__pyx_t_6);
   __Pyx_XDECREF(__pyx_t_7);
+  __Pyx_XDECREF(__pyx_t_8);
   __Pyx_XDECREF(__pyx_t_9);
+  __Pyx_XDECREF(__pyx_t_11);
   __Pyx_AddTraceback("genexpr", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_r); __pyx_r = 0;
@@ -4936,7 +5144,7 @@ static PyObject *__pyx_gb_14mdtraj_contrib_8analysis_14water_dynamics_19Survival
   return __pyx_r;
 }
 
-/* "mdtraj_contrib/analysis/water_dynamics.pyx":162
+/* "mdtraj_contrib/analysis/water_dynamics.pyx":165
  *         return 0 if Nt == 0 else float(Ntau)/float(Nt)
  * 
  *     def _calc_mean_survival(object self, int tau):             # <<<<<<<<<<<<<<
@@ -4953,6 +5161,8 @@ static PyObject *__pyx_pf_14mdtraj_contrib_8analysis_14water_dynamics_19Survival
   PyObject *__pyx_t_2 = NULL;
   PyObject *__pyx_t_3 = NULL;
   PyObject *__pyx_t_4 = NULL;
+  PyObject *__pyx_t_5 = NULL;
+  PyObject *__pyx_t_6 = NULL;
   __Pyx_RefNannySetupContext("_calc_mean_survival", 0);
   __pyx_cur_scope = (struct __pyx_obj_14mdtraj_contrib_8analysis_14water_dynamics___pyx_scope_struct_1__calc_mean_survival *)__pyx_tp_new_14mdtraj_contrib_8analysis_14water_dynamics___pyx_scope_struct_1__calc_mean_survival(__pyx_ptype_14mdtraj_contrib_8analysis_14water_dynamics___pyx_scope_struct_1__calc_mean_survival, __pyx_empty_tuple, NULL);
   if (unlikely(!__pyx_cur_scope)) {
@@ -4965,34 +5175,34 @@ static PyObject *__pyx_pf_14mdtraj_contrib_8analysis_14water_dynamics_19Survival
   __Pyx_GIVEREF((PyObject *)__pyx_cur_scope->__pyx_v_self);
   __pyx_cur_scope->__pyx_v_tau = __pyx_v_tau;
 
-  /* "mdtraj_contrib/analysis/water_dynamics.pyx":165
+  /* "mdtraj_contrib/analysis/water_dynamics.pyx":168
  *         cdef int t
  *         cdef list survival_deltas = list(filter(
  *             lambda float x: x != 0, (             # <<<<<<<<<<<<<<
  *                 self._calc_mean_survival_delta(t, tau)
- *                 for t in range(1, self.nframes-tau)
+ *                 for t in range(1, self.nframes-tau, tau)
  */
-  __pyx_t_1 = __Pyx_CyFunction_NewEx(&__pyx_mdef_14mdtraj_contrib_8analysis_14water_dynamics_19SurvivalProbability_19_calc_mean_survival_lambda, 0, __pyx_n_s_calc_mean_survival_locals_lambd, NULL, __pyx_n_s_mdtraj_contrib_analysis_water_dy, __pyx_d, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 165, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_CyFunction_NewEx(&__pyx_mdef_14mdtraj_contrib_8analysis_14water_dynamics_19SurvivalProbability_19_calc_mean_survival_lambda, 0, __pyx_n_s_calc_mean_survival_locals_lambd, NULL, __pyx_n_s_mdtraj_contrib_analysis_water_dy, __pyx_d, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 168, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
 
-  /* "mdtraj_contrib/analysis/water_dynamics.pyx":166
+  /* "mdtraj_contrib/analysis/water_dynamics.pyx":169
  *         cdef list survival_deltas = list(filter(
  *             lambda float x: x != 0, (
  *                 self._calc_mean_survival_delta(t, tau)             # <<<<<<<<<<<<<<
- *                 for t in range(1, self.nframes-tau)
+ *                 for t in range(1, self.nframes-tau, tau)
  *             )))
  */
-  __pyx_t_2 = __pyx_pf_14mdtraj_contrib_8analysis_14water_dynamics_19SurvivalProbability_19_calc_mean_survival_1genexpr(((PyObject*)__pyx_cur_scope)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 166, __pyx_L1_error)
+  __pyx_t_2 = __pyx_pf_14mdtraj_contrib_8analysis_14water_dynamics_19SurvivalProbability_19_calc_mean_survival_1genexpr(((PyObject*)__pyx_cur_scope)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 169, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
 
-  /* "mdtraj_contrib/analysis/water_dynamics.pyx":164
+  /* "mdtraj_contrib/analysis/water_dynamics.pyx":167
  *     def _calc_mean_survival(object self, int tau):
  *         cdef int t
  *         cdef list survival_deltas = list(filter(             # <<<<<<<<<<<<<<
  *             lambda float x: x != 0, (
  *                 self._calc_mean_survival_delta(t, tau)
  */
-  __pyx_t_3 = PyTuple_New(2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 164, __pyx_L1_error)
+  __pyx_t_3 = PyTuple_New(2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 167, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_GIVEREF(__pyx_t_1);
   PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_t_1);
@@ -5000,58 +5210,95 @@ static PyObject *__pyx_pf_14mdtraj_contrib_8analysis_14water_dynamics_19Survival
   PyTuple_SET_ITEM(__pyx_t_3, 1, __pyx_t_2);
   __pyx_t_1 = 0;
   __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_filter, __pyx_t_3, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 164, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_filter, __pyx_t_3, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 167, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_3 = PySequence_List(__pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 164, __pyx_L1_error)
+  __pyx_t_3 = PySequence_List(__pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 167, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_v_survival_deltas = ((PyObject*)__pyx_t_3);
   __pyx_t_3 = 0;
 
-  /* "mdtraj_contrib/analysis/water_dynamics.pyx":169
- *                 for t in range(1, self.nframes-tau)
+  /* "mdtraj_contrib/analysis/water_dynamics.pyx":172
+ *                 for t in range(1, self.nframes-tau, tau)
  *             )))
- *         return np.mean(survival_deltas)             # <<<<<<<<<<<<<<
+ *         return np.mean(survival_deltas[~np.isnan(survival_deltas)])             # <<<<<<<<<<<<<<
  * 
  *     def calc(object self):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 169, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 172, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_mean); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 169, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_mean); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 172, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = NULL;
+  __pyx_t_4 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 172, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_4);
+  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_isnan); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 172, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_5);
+  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+  __pyx_t_4 = NULL;
+  if (CYTHON_COMPILING_IN_CPYTHON && unlikely(PyMethod_Check(__pyx_t_5))) {
+    __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_5);
+    if (likely(__pyx_t_4)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_5);
+      __Pyx_INCREF(__pyx_t_4);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_5, function);
+    }
+  }
+  if (!__pyx_t_4) {
+    __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_5, __pyx_v_survival_deltas); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 172, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+  } else {
+    __pyx_t_6 = PyTuple_New(1+1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 172, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_6);
+    __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_t_4); __pyx_t_4 = NULL;
+    __Pyx_INCREF(__pyx_v_survival_deltas);
+    __Pyx_GIVEREF(__pyx_v_survival_deltas);
+    PyTuple_SET_ITEM(__pyx_t_6, 0+1, __pyx_v_survival_deltas);
+    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_6, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 172, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+  }
+  __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+  __pyx_t_5 = PyNumber_Invert(__pyx_t_2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 172, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_5);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_2 = PyObject_GetItem(__pyx_v_survival_deltas, __pyx_t_5); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 172, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+  __pyx_t_5 = NULL;
   if (CYTHON_COMPILING_IN_CPYTHON && unlikely(PyMethod_Check(__pyx_t_1))) {
-    __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_1);
-    if (likely(__pyx_t_2)) {
+    __pyx_t_5 = PyMethod_GET_SELF(__pyx_t_1);
+    if (likely(__pyx_t_5)) {
       PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_1);
-      __Pyx_INCREF(__pyx_t_2);
+      __Pyx_INCREF(__pyx_t_5);
       __Pyx_INCREF(function);
       __Pyx_DECREF_SET(__pyx_t_1, function);
     }
   }
-  if (!__pyx_t_2) {
-    __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_v_survival_deltas); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 169, __pyx_L1_error)
+  if (!__pyx_t_5) {
+    __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 172, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __Pyx_GOTREF(__pyx_t_3);
   } else {
-    __pyx_t_4 = PyTuple_New(1+1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 169, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_4);
-    __Pyx_GIVEREF(__pyx_t_2); PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_t_2); __pyx_t_2 = NULL;
-    __Pyx_INCREF(__pyx_v_survival_deltas);
-    __Pyx_GIVEREF(__pyx_v_survival_deltas);
-    PyTuple_SET_ITEM(__pyx_t_4, 0+1, __pyx_v_survival_deltas);
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_4, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 169, __pyx_L1_error)
+    __pyx_t_6 = PyTuple_New(1+1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 172, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_6);
+    __Pyx_GIVEREF(__pyx_t_5); PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_t_5); __pyx_t_5 = NULL;
+    __Pyx_GIVEREF(__pyx_t_2);
+    PyTuple_SET_ITEM(__pyx_t_6, 0+1, __pyx_t_2);
+    __pyx_t_2 = 0;
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_6, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 172, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+    __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
   }
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_r = __pyx_t_3;
   __pyx_t_3 = 0;
   goto __pyx_L0;
 
-  /* "mdtraj_contrib/analysis/water_dynamics.pyx":162
+  /* "mdtraj_contrib/analysis/water_dynamics.pyx":165
  *         return 0 if Nt == 0 else float(Ntau)/float(Nt)
  * 
  *     def _calc_mean_survival(object self, int tau):             # <<<<<<<<<<<<<<
@@ -5065,6 +5312,8 @@ static PyObject *__pyx_pf_14mdtraj_contrib_8analysis_14water_dynamics_19Survival
   __Pyx_XDECREF(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_XDECREF(__pyx_t_5);
+  __Pyx_XDECREF(__pyx_t_6);
   __Pyx_AddTraceback("mdtraj_contrib.analysis.water_dynamics.SurvivalProbability._calc_mean_survival", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
@@ -5076,8 +5325,8 @@ static PyObject *__pyx_pf_14mdtraj_contrib_8analysis_14water_dynamics_19Survival
 }
 static PyObject *__pyx_gb_14mdtraj_contrib_8analysis_14water_dynamics_19SurvivalProbability_10generator1(__pyx_CoroutineObject *__pyx_generator, PyObject *__pyx_sent_value); /* proto */
 
-/* "mdtraj_contrib/analysis/water_dynamics.pyx":171
- *         return np.mean(survival_deltas)
+/* "mdtraj_contrib/analysis/water_dynamics.pyx":174
+ *         return np.mean(survival_deltas[~np.isnan(survival_deltas)])
  * 
  *     def calc(object self):             # <<<<<<<<<<<<<<
  *         cdef int tau
@@ -5112,7 +5361,7 @@ static PyObject *__pyx_pf_14mdtraj_contrib_8analysis_14water_dynamics_19Survival
   __Pyx_INCREF((PyObject *)__pyx_cur_scope->__pyx_v_self);
   __Pyx_GIVEREF((PyObject *)__pyx_cur_scope->__pyx_v_self);
   {
-    __pyx_CoroutineObject *gen = __Pyx_Generator_New((__pyx_coroutine_body_t) __pyx_gb_14mdtraj_contrib_8analysis_14water_dynamics_19SurvivalProbability_10generator1, (PyObject *) __pyx_cur_scope, __pyx_n_s_calc, __pyx_n_s_SurvivalProbability_calc); if (unlikely(!gen)) __PYX_ERR(0, 171, __pyx_L1_error)
+    __pyx_CoroutineObject *gen = __Pyx_Generator_New((__pyx_coroutine_body_t) __pyx_gb_14mdtraj_contrib_8analysis_14water_dynamics_19SurvivalProbability_10generator1, (PyObject *) __pyx_cur_scope, __pyx_n_s_calc, __pyx_n_s_SurvivalProbability_calc); if (unlikely(!gen)) __PYX_ERR(0, 174, __pyx_L1_error)
     __Pyx_DECREF(__pyx_cur_scope);
     __Pyx_RefNannyFinishContext();
     return (PyObject *) gen;
@@ -5149,9 +5398,9 @@ static PyObject *__pyx_gb_14mdtraj_contrib_8analysis_14water_dynamics_19Survival
     return NULL;
   }
   __pyx_L3_first_run:;
-  if (unlikely(!__pyx_sent_value)) __PYX_ERR(0, 171, __pyx_L1_error)
+  if (unlikely(!__pyx_sent_value)) __PYX_ERR(0, 174, __pyx_L1_error)
 
-  /* "mdtraj_contrib/analysis/water_dynamics.pyx":173
+  /* "mdtraj_contrib/analysis/water_dynamics.pyx":176
  *     def calc(object self):
  *         cdef int tau
  *         for tau in range(1, self.taumax+1):             # <<<<<<<<<<<<<<
@@ -5162,16 +5411,16 @@ static PyObject *__pyx_gb_14mdtraj_contrib_8analysis_14water_dynamics_19Survival
   for (__pyx_t_2 = 1; __pyx_t_2 < __pyx_t_1; __pyx_t_2+=1) {
     __pyx_cur_scope->__pyx_v_tau = __pyx_t_2;
 
-    /* "mdtraj_contrib/analysis/water_dynamics.pyx":174
+    /* "mdtraj_contrib/analysis/water_dynamics.pyx":177
  *         cdef int tau
  *         for tau in range(1, self.taumax+1):
  *             yield self._calc_mean_survival(tau)             # <<<<<<<<<<<<<<
  * 
  * def calc_survival_probability(object trajectory,
  */
-    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_cur_scope->__pyx_v_self), __pyx_n_s_calc_mean_survival); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 174, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_cur_scope->__pyx_v_self), __pyx_n_s_calc_mean_survival); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 177, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_5 = __Pyx_PyInt_From_int(__pyx_cur_scope->__pyx_v_tau); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 174, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyInt_From_int(__pyx_cur_scope->__pyx_v_tau); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 177, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __pyx_t_6 = NULL;
     if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_4))) {
@@ -5184,17 +5433,17 @@ static PyObject *__pyx_gb_14mdtraj_contrib_8analysis_14water_dynamics_19Survival
       }
     }
     if (!__pyx_t_6) {
-      __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_5); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 174, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_5); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 177, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
       __Pyx_GOTREF(__pyx_t_3);
     } else {
-      __pyx_t_7 = PyTuple_New(1+1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 174, __pyx_L1_error)
+      __pyx_t_7 = PyTuple_New(1+1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 177, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
       __Pyx_GIVEREF(__pyx_t_6); PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_t_6); __pyx_t_6 = NULL;
       __Pyx_GIVEREF(__pyx_t_5);
       PyTuple_SET_ITEM(__pyx_t_7, 0+1, __pyx_t_5);
       __pyx_t_5 = 0;
-      __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_7, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 174, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_7, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 177, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
     }
@@ -5211,11 +5460,11 @@ static PyObject *__pyx_gb_14mdtraj_contrib_8analysis_14water_dynamics_19Survival
     __pyx_L6_resume_from_yield:;
     __pyx_t_1 = __pyx_cur_scope->__pyx_t_0;
     __pyx_t_2 = __pyx_cur_scope->__pyx_t_1;
-    if (unlikely(!__pyx_sent_value)) __PYX_ERR(0, 174, __pyx_L1_error)
+    if (unlikely(!__pyx_sent_value)) __PYX_ERR(0, 177, __pyx_L1_error)
   }
 
-  /* "mdtraj_contrib/analysis/water_dynamics.pyx":171
- *         return np.mean(survival_deltas)
+  /* "mdtraj_contrib/analysis/water_dynamics.pyx":174
+ *         return np.mean(survival_deltas[~np.isnan(survival_deltas)])
  * 
  *     def calc(object self):             # <<<<<<<<<<<<<<
  *         cdef int tau
@@ -5240,7 +5489,7 @@ static PyObject *__pyx_gb_14mdtraj_contrib_8analysis_14water_dynamics_19Survival
   return __pyx_r;
 }
 
-/* "mdtraj_contrib/analysis/water_dynamics.pyx":176
+/* "mdtraj_contrib/analysis/water_dynamics.pyx":179
  *             yield self._calc_mean_survival(tau)
  * 
  * def calc_survival_probability(object trajectory,             # <<<<<<<<<<<<<<
@@ -5283,7 +5532,7 @@ static PyObject *__pyx_pw_14mdtraj_contrib_8analysis_14water_dynamics_7calc_surv
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_indexes)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("calc_survival_probability", 0, 2, 5, 1); __PYX_ERR(0, 176, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("calc_survival_probability", 0, 2, 5, 1); __PYX_ERR(0, 179, __pyx_L3_error)
         }
         case  2:
         if (kw_args > 0) {
@@ -5302,7 +5551,7 @@ static PyObject *__pyx_pw_14mdtraj_contrib_8analysis_14water_dynamics_7calc_surv
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "calc_survival_probability") < 0)) __PYX_ERR(0, 176, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "calc_survival_probability") < 0)) __PYX_ERR(0, 179, __pyx_L3_error)
       }
     } else {
       switch (PyTuple_GET_SIZE(__pyx_args)) {
@@ -5318,30 +5567,30 @@ static PyObject *__pyx_pw_14mdtraj_contrib_8analysis_14water_dynamics_7calc_surv
     __pyx_v_trajectory = values[0];
     __pyx_v_indexes = ((__pyx_t_14mdtraj_contrib_8analysis_14water_dynamics_ARRAY)values[1]);
     if (values[2]) {
-      __pyx_v_t0 = __Pyx_PyInt_As_int(values[2]); if (unlikely((__pyx_v_t0 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 178, __pyx_L3_error)
+      __pyx_v_t0 = __Pyx_PyInt_As_int(values[2]); if (unlikely((__pyx_v_t0 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 181, __pyx_L3_error)
     } else {
       __pyx_v_t0 = ((int)0);
     }
     if (values[3]) {
-      __pyx_v_tf = __Pyx_PyInt_As_int(values[3]); if (unlikely((__pyx_v_tf == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 178, __pyx_L3_error)
+      __pyx_v_tf = __Pyx_PyInt_As_int(values[3]); if (unlikely((__pyx_v_tf == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 181, __pyx_L3_error)
     } else {
       __pyx_v_tf = ((int)-1);
     }
     if (values[4]) {
-      __pyx_v_taumax = __Pyx_PyInt_As_int(values[4]); if (unlikely((__pyx_v_taumax == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 178, __pyx_L3_error)
+      __pyx_v_taumax = __Pyx_PyInt_As_int(values[4]); if (unlikely((__pyx_v_taumax == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 181, __pyx_L3_error)
     } else {
       __pyx_v_taumax = ((int)20);
     }
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("calc_survival_probability", 0, 2, 5, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 176, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("calc_survival_probability", 0, 2, 5, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 179, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("mdtraj_contrib.analysis.water_dynamics.calc_survival_probability", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_indexes), __pyx_ptype_5numpy_ndarray, 1, "indexes", 0))) __PYX_ERR(0, 177, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_indexes), __pyx_ptype_5numpy_ndarray, 1, "indexes", 0))) __PYX_ERR(0, 180, __pyx_L1_error)
   __pyx_r = __pyx_pf_14mdtraj_contrib_8analysis_14water_dynamics_6calc_survival_probability(__pyx_self, __pyx_v_trajectory, __pyx_v_indexes, __pyx_v_t0, __pyx_v_tf, __pyx_v_taumax);
 
   /* function exit code */
@@ -5370,39 +5619,39 @@ static PyObject *__pyx_pf_14mdtraj_contrib_8analysis_14water_dynamics_6calc_surv
   __pyx_pybuffernd_indexes.rcbuffer = &__pyx_pybuffer_indexes;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_indexes.rcbuffer->pybuffer, (PyObject*)__pyx_v_indexes, &__Pyx_TypeInfo_nn___pyx_t_14mdtraj_contrib_8analysis_14water_dynamics_INT_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) __PYX_ERR(0, 176, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_indexes.rcbuffer->pybuffer, (PyObject*)__pyx_v_indexes, &__Pyx_TypeInfo_nn___pyx_t_14mdtraj_contrib_8analysis_14water_dynamics_INT_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) __PYX_ERR(0, 179, __pyx_L1_error)
   }
   __pyx_pybuffernd_indexes.diminfo[0].strides = __pyx_pybuffernd_indexes.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_indexes.diminfo[0].shape = __pyx_pybuffernd_indexes.rcbuffer->pybuffer.shape[0]; __pyx_pybuffernd_indexes.diminfo[1].strides = __pyx_pybuffernd_indexes.rcbuffer->pybuffer.strides[1]; __pyx_pybuffernd_indexes.diminfo[1].shape = __pyx_pybuffernd_indexes.rcbuffer->pybuffer.shape[1];
 
-  /* "mdtraj_contrib/analysis/water_dynamics.pyx":180
+  /* "mdtraj_contrib/analysis/water_dynamics.pyx":183
  *                               int t0=0, int tf=-1, int taumax=20):
  *     instance = SurvivalProbability(
  *         trajectory, indexes, t0, tf, taumax             # <<<<<<<<<<<<<<
  *     )
  *     return instance.calc()
  */
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_t0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 180, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_t0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 183, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_tf); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 180, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_tf); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 183, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
 
-  /* "mdtraj_contrib/analysis/water_dynamics.pyx":181
+  /* "mdtraj_contrib/analysis/water_dynamics.pyx":184
  *     instance = SurvivalProbability(
  *         trajectory, indexes, t0, tf, taumax
  *     )             # <<<<<<<<<<<<<<
  *     return instance.calc()
  */
-  __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_v_taumax); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 181, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_v_taumax); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 184, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
 
-  /* "mdtraj_contrib/analysis/water_dynamics.pyx":179
+  /* "mdtraj_contrib/analysis/water_dynamics.pyx":182
  *                               ARRAY[INT_t, ndim=2] indexes,
  *                               int t0=0, int tf=-1, int taumax=20):
  *     instance = SurvivalProbability(             # <<<<<<<<<<<<<<
  *         trajectory, indexes, t0, tf, taumax
  *     )
  */
-  __pyx_t_4 = PyTuple_New(5); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 179, __pyx_L1_error)
+  __pyx_t_4 = PyTuple_New(5); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 182, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_INCREF(__pyx_v_trajectory);
   __Pyx_GIVEREF(__pyx_v_trajectory);
@@ -5419,19 +5668,19 @@ static PyObject *__pyx_pf_14mdtraj_contrib_8analysis_14water_dynamics_6calc_surv
   __pyx_t_1 = 0;
   __pyx_t_2 = 0;
   __pyx_t_3 = 0;
-  __pyx_t_3 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_14mdtraj_contrib_8analysis_14water_dynamics_SurvivalProbability), __pyx_t_4, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 179, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_14mdtraj_contrib_8analysis_14water_dynamics_SurvivalProbability), __pyx_t_4, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 182, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   __pyx_v_instance = ((struct __pyx_obj_14mdtraj_contrib_8analysis_14water_dynamics_SurvivalProbability *)__pyx_t_3);
   __pyx_t_3 = 0;
 
-  /* "mdtraj_contrib/analysis/water_dynamics.pyx":182
+  /* "mdtraj_contrib/analysis/water_dynamics.pyx":185
  *         trajectory, indexes, t0, tf, taumax
  *     )
  *     return instance.calc()             # <<<<<<<<<<<<<<
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_instance), __pyx_n_s_calc); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 182, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_instance), __pyx_n_s_calc); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 185, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __pyx_t_2 = NULL;
   if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_4))) {
@@ -5444,10 +5693,10 @@ static PyObject *__pyx_pf_14mdtraj_contrib_8analysis_14water_dynamics_6calc_surv
     }
   }
   if (__pyx_t_2) {
-    __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 182, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 185, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   } else {
-    __pyx_t_3 = __Pyx_PyObject_CallNoArg(__pyx_t_4); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 182, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_CallNoArg(__pyx_t_4); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 185, __pyx_L1_error)
   }
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
@@ -5455,7 +5704,7 @@ static PyObject *__pyx_pf_14mdtraj_contrib_8analysis_14water_dynamics_6calc_surv
   __pyx_t_3 = 0;
   goto __pyx_L0;
 
-  /* "mdtraj_contrib/analysis/water_dynamics.pyx":176
+  /* "mdtraj_contrib/analysis/water_dynamics.pyx":179
  *             yield self._calc_mean_survival(tau)
  * 
  * def calc_survival_probability(object trajectory,             # <<<<<<<<<<<<<<
@@ -7737,8 +7986,7 @@ static PyObject *__pyx_tp_new_14mdtraj_contrib_8analysis_14water_dynamics_Surviv
   if (unlikely(!o)) return 0;
   p = ((struct __pyx_obj_14mdtraj_contrib_8analysis_14water_dynamics_SurvivalProbability *)o);
   p->trajectory = Py_None; Py_INCREF(Py_None);
-  p->indexes = ((__pyx_t_14mdtraj_contrib_8analysis_14water_dynamics_ARRAY)Py_None); Py_INCREF(Py_None);
-  p->exclude = ((PyObject*)Py_None); Py_INCREF(Py_None);
+  p->indexes = ((PyObject*)Py_None); Py_INCREF(Py_None);
   return o;
 }
 
@@ -7752,7 +8000,6 @@ static void __pyx_tp_dealloc_14mdtraj_contrib_8analysis_14water_dynamics_Surviva
   PyObject_GC_UnTrack(o);
   Py_CLEAR(p->trajectory);
   Py_CLEAR(p->indexes);
-  Py_CLEAR(p->exclude);
   (*Py_TYPE(o)->tp_free)(o);
 }
 
@@ -7763,10 +8010,7 @@ static int __pyx_tp_traverse_14mdtraj_contrib_8analysis_14water_dynamics_Surviva
     e = (*v)(p->trajectory, a); if (e) return e;
   }
   if (p->indexes) {
-    e = (*v)(((PyObject*)p->indexes), a); if (e) return e;
-  }
-  if (p->exclude) {
-    e = (*v)(p->exclude, a); if (e) return e;
+    e = (*v)(p->indexes, a); if (e) return e;
   }
   return 0;
 }
@@ -7778,10 +8022,7 @@ static int __pyx_tp_clear_14mdtraj_contrib_8analysis_14water_dynamics_SurvivalPr
   p->trajectory = Py_None; Py_INCREF(Py_None);
   Py_XDECREF(tmp);
   tmp = ((PyObject*)p->indexes);
-  p->indexes = ((__pyx_t_14mdtraj_contrib_8analysis_14water_dynamics_ARRAY)Py_None); Py_INCREF(Py_None);
-  Py_XDECREF(tmp);
-  tmp = ((PyObject*)p->exclude);
-  p->exclude = ((PyObject*)Py_None); Py_INCREF(Py_None);
+  p->indexes = ((PyObject*)Py_None); Py_INCREF(Py_None);
   Py_XDECREF(tmp);
   return 0;
 }
@@ -8081,6 +8322,7 @@ static void __pyx_tp_dealloc_14mdtraj_contrib_8analysis_14water_dynamics___pyx_s
   struct __pyx_obj_14mdtraj_contrib_8analysis_14water_dynamics___pyx_scope_struct_2_genexpr *p = (struct __pyx_obj_14mdtraj_contrib_8analysis_14water_dynamics___pyx_scope_struct_2_genexpr *)o;
   PyObject_GC_UnTrack(o);
   Py_CLEAR(p->__pyx_outer_scope);
+  Py_CLEAR(p->__pyx_t_0);
   if (CYTHON_COMPILING_IN_CPYTHON && ((__pyx_freecount_14mdtraj_contrib_8analysis_14water_dynamics___pyx_scope_struct_2_genexpr < 8) & (Py_TYPE(o)->tp_basicsize == sizeof(struct __pyx_obj_14mdtraj_contrib_8analysis_14water_dynamics___pyx_scope_struct_2_genexpr)))) {
     __pyx_freelist_14mdtraj_contrib_8analysis_14water_dynamics___pyx_scope_struct_2_genexpr[__pyx_freecount_14mdtraj_contrib_8analysis_14water_dynamics___pyx_scope_struct_2_genexpr++] = ((struct __pyx_obj_14mdtraj_contrib_8analysis_14water_dynamics___pyx_scope_struct_2_genexpr *)o);
   } else {
@@ -8094,6 +8336,9 @@ static int __pyx_tp_traverse_14mdtraj_contrib_8analysis_14water_dynamics___pyx_s
   if (p->__pyx_outer_scope) {
     e = (*v)(((PyObject*)p->__pyx_outer_scope), a); if (e) return e;
   }
+  if (p->__pyx_t_0) {
+    e = (*v)(p->__pyx_t_0, a); if (e) return e;
+  }
   return 0;
 }
 
@@ -8102,6 +8347,9 @@ static int __pyx_tp_clear_14mdtraj_contrib_8analysis_14water_dynamics___pyx_scop
   struct __pyx_obj_14mdtraj_contrib_8analysis_14water_dynamics___pyx_scope_struct_2_genexpr *p = (struct __pyx_obj_14mdtraj_contrib_8analysis_14water_dynamics___pyx_scope_struct_2_genexpr *)o;
   tmp = ((PyObject*)p->__pyx_outer_scope);
   p->__pyx_outer_scope = ((struct __pyx_obj_14mdtraj_contrib_8analysis_14water_dynamics___pyx_scope_struct_1__calc_mean_survival *)Py_None); Py_INCREF(Py_None);
+  Py_XDECREF(tmp);
+  tmp = ((PyObject*)p->__pyx_t_0);
+  p->__pyx_t_0 = Py_None; Py_INCREF(Py_None);
   Py_XDECREF(tmp);
   return 0;
 }
@@ -8360,7 +8608,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
 static int __Pyx_InitCachedBuiltins(void) {
   __pyx_builtin_zip = __Pyx_GetBuiltinName(__pyx_n_s_zip); if (!__pyx_builtin_zip) __PYX_ERR(0, 104, __pyx_L1_error)
   __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 112, __pyx_L1_error)
-  __pyx_builtin_filter = __Pyx_GetBuiltinName(__pyx_n_s_filter); if (!__pyx_builtin_filter) __PYX_ERR(0, 164, __pyx_L1_error)
+  __pyx_builtin_filter = __Pyx_GetBuiltinName(__pyx_n_s_filter); if (!__pyx_builtin_filter) __PYX_ERR(0, 167, __pyx_L1_error)
   __pyx_builtin_ValueError = __Pyx_GetBuiltinName(__pyx_n_s_ValueError); if (!__pyx_builtin_ValueError) __PYX_ERR(1, 218, __pyx_L1_error)
   __pyx_builtin_RuntimeError = __Pyx_GetBuiltinName(__pyx_n_s_RuntimeError); if (!__pyx_builtin_RuntimeError) __PYX_ERR(1, 799, __pyx_L1_error)
   return 0;
@@ -8485,17 +8733,17 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_GIVEREF(__pyx_tuple__12);
   __pyx_codeobj__13 = (PyObject*)__Pyx_PyCode_New(5, 0, 6, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__12, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_alisue_Code_github_com_lam, __pyx_n_s_calc_orientational_relaxation, 122, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__13)) __PYX_ERR(0, 122, __pyx_L1_error)
 
-  /* "mdtraj_contrib/analysis/water_dynamics.pyx":176
+  /* "mdtraj_contrib/analysis/water_dynamics.pyx":179
  *             yield self._calc_mean_survival(tau)
  * 
  * def calc_survival_probability(object trajectory,             # <<<<<<<<<<<<<<
  *                               ARRAY[INT_t, ndim=2] indexes,
  *                               int t0=0, int tf=-1, int taumax=20):
  */
-  __pyx_tuple__14 = PyTuple_Pack(6, __pyx_n_s_trajectory, __pyx_n_s_indexes, __pyx_n_s_t0, __pyx_n_s_tf, __pyx_n_s_taumax, __pyx_n_s_instance); if (unlikely(!__pyx_tuple__14)) __PYX_ERR(0, 176, __pyx_L1_error)
+  __pyx_tuple__14 = PyTuple_Pack(6, __pyx_n_s_trajectory, __pyx_n_s_indexes, __pyx_n_s_t0, __pyx_n_s_tf, __pyx_n_s_taumax, __pyx_n_s_instance); if (unlikely(!__pyx_tuple__14)) __PYX_ERR(0, 179, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__14);
   __Pyx_GIVEREF(__pyx_tuple__14);
-  __pyx_codeobj__15 = (PyObject*)__Pyx_PyCode_New(5, 0, 6, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__14, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_alisue_Code_github_com_lam, __pyx_n_s_calc_survival_probability, 176, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__15)) __PYX_ERR(0, 176, __pyx_L1_error)
+  __pyx_codeobj__15 = (PyObject*)__Pyx_PyCode_New(5, 0, 6, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__14, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_alisue_Code_github_com_lam, __pyx_n_s_calc_survival_probability, 179, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__15)) __PYX_ERR(0, 179, __pyx_L1_error)
   __Pyx_RefNannyFinishContext();
   return 0;
   __pyx_L1_error:;
@@ -8510,7 +8758,6 @@ static int __Pyx_InitGlobals(void) {
   __pyx_int_0 = PyInt_FromLong(0); if (unlikely(!__pyx_int_0)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_int_1 = PyInt_FromLong(1); if (unlikely(!__pyx_int_1)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_int_2 = PyInt_FromLong(2); if (unlikely(!__pyx_int_2)) __PYX_ERR(0, 1, __pyx_L1_error)
-  __pyx_int_neg_1 = PyInt_FromLong(-1); if (unlikely(!__pyx_int_neg_1)) __PYX_ERR(0, 1, __pyx_L1_error)
   return 0;
   __pyx_L1_error:;
   return -1;
@@ -8611,13 +8858,13 @@ PyMODINIT_FUNC PyInit_water_dynamics(void)
   if (PyType_Ready(&__pyx_type_14mdtraj_contrib_8analysis_14water_dynamics___pyx_scope_struct__calc) < 0) __PYX_ERR(0, 116, __pyx_L1_error)
   __pyx_type_14mdtraj_contrib_8analysis_14water_dynamics___pyx_scope_struct__calc.tp_print = 0;
   __pyx_ptype_14mdtraj_contrib_8analysis_14water_dynamics___pyx_scope_struct__calc = &__pyx_type_14mdtraj_contrib_8analysis_14water_dynamics___pyx_scope_struct__calc;
-  if (PyType_Ready(&__pyx_type_14mdtraj_contrib_8analysis_14water_dynamics___pyx_scope_struct_1__calc_mean_survival) < 0) __PYX_ERR(0, 162, __pyx_L1_error)
+  if (PyType_Ready(&__pyx_type_14mdtraj_contrib_8analysis_14water_dynamics___pyx_scope_struct_1__calc_mean_survival) < 0) __PYX_ERR(0, 165, __pyx_L1_error)
   __pyx_type_14mdtraj_contrib_8analysis_14water_dynamics___pyx_scope_struct_1__calc_mean_survival.tp_print = 0;
   __pyx_ptype_14mdtraj_contrib_8analysis_14water_dynamics___pyx_scope_struct_1__calc_mean_survival = &__pyx_type_14mdtraj_contrib_8analysis_14water_dynamics___pyx_scope_struct_1__calc_mean_survival;
-  if (PyType_Ready(&__pyx_type_14mdtraj_contrib_8analysis_14water_dynamics___pyx_scope_struct_2_genexpr) < 0) __PYX_ERR(0, 166, __pyx_L1_error)
+  if (PyType_Ready(&__pyx_type_14mdtraj_contrib_8analysis_14water_dynamics___pyx_scope_struct_2_genexpr) < 0) __PYX_ERR(0, 169, __pyx_L1_error)
   __pyx_type_14mdtraj_contrib_8analysis_14water_dynamics___pyx_scope_struct_2_genexpr.tp_print = 0;
   __pyx_ptype_14mdtraj_contrib_8analysis_14water_dynamics___pyx_scope_struct_2_genexpr = &__pyx_type_14mdtraj_contrib_8analysis_14water_dynamics___pyx_scope_struct_2_genexpr;
-  if (PyType_Ready(&__pyx_type_14mdtraj_contrib_8analysis_14water_dynamics___pyx_scope_struct_3_calc) < 0) __PYX_ERR(0, 171, __pyx_L1_error)
+  if (PyType_Ready(&__pyx_type_14mdtraj_contrib_8analysis_14water_dynamics___pyx_scope_struct_3_calc) < 0) __PYX_ERR(0, 174, __pyx_L1_error)
   __pyx_type_14mdtraj_contrib_8analysis_14water_dynamics___pyx_scope_struct_3_calc.tp_print = 0;
   __pyx_ptype_14mdtraj_contrib_8analysis_14water_dynamics___pyx_scope_struct_3_calc = &__pyx_type_14mdtraj_contrib_8analysis_14water_dynamics___pyx_scope_struct_3_calc;
   /*--- Type import code ---*/
@@ -8700,16 +8947,16 @@ PyMODINIT_FUNC PyInit_water_dynamics(void)
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_calc_orientational_relaxation, __pyx_t_1) < 0) __PYX_ERR(0, 122, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "mdtraj_contrib/analysis/water_dynamics.pyx":176
+  /* "mdtraj_contrib/analysis/water_dynamics.pyx":179
  *             yield self._calc_mean_survival(tau)
  * 
  * def calc_survival_probability(object trajectory,             # <<<<<<<<<<<<<<
  *                               ARRAY[INT_t, ndim=2] indexes,
  *                               int t0=0, int tf=-1, int taumax=20):
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_14mdtraj_contrib_8analysis_14water_dynamics_7calc_survival_probability, NULL, __pyx_n_s_mdtraj_contrib_analysis_water_dy); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 176, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_14mdtraj_contrib_8analysis_14water_dynamics_7calc_survival_probability, NULL, __pyx_n_s_mdtraj_contrib_analysis_water_dy); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 179, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_calc_survival_probability, __pyx_t_1) < 0) __PYX_ERR(0, 176, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_calc_survival_probability, __pyx_t_1) < 0) __PYX_ERR(0, 179, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /* "mdtraj_contrib/analysis/water_dynamics.pyx":1

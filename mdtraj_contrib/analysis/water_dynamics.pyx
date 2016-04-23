@@ -131,10 +131,9 @@ def calc_orientational_relaxation(object trajectory,
 cdef class SurvivalProbability(object):
 
     cdef object trajectory
-    cdef ARRAY indexes
+    cdef list indexes
     cdef int nframes
     cdef int taumax
-    cdef set exclude
 
     def __init__(object self,
                  object trajectory,
@@ -145,18 +144,22 @@ cdef class SurvivalProbability(object):
         self.indexes = indexes[t0:tf]
         self.nframes = len(self.trajectory)
         self.taumax = taumax
-        self.exclude = set([-1])
+
+        self.indexes = []
+        cdef ARRAY[INT_t, ndim=1] index
+        for index in indexes[t0:tf]:
+            self.indexes.append(index[index >= 0])
 
     def _count_stayed_atoms(object self, int t, int tau):
         cdef int dt
         cdef set stayed = set(self.indexes[t])
         for dt in range(1, min(tau, len(self.indexes)-t)):
             stayed &= set(self.indexes[t+dt])
-        return len(stayed - self.exclude)
+        return len(stayed)
 
     def _calc_mean_survival_delta(object self, int t, int tau):
         cdef int Ntau = self._count_stayed_atoms(t, tau)
-        cdef int Nt   = len(set(self.indexes[t]) - self.exclude)
+        cdef int Nt   = len(self.indexes[t])
         return 0 if Nt == 0 else float(Ntau)/float(Nt)
 
     def _calc_mean_survival(object self, int tau):
@@ -164,9 +167,9 @@ cdef class SurvivalProbability(object):
         cdef list survival_deltas = list(filter(
             lambda float x: x != 0, (
                 self._calc_mean_survival_delta(t, tau)
-                for t in range(1, self.nframes-tau)
+                for t in range(1, self.nframes-tau, tau)
             )))
-        return np.mean(survival_deltas)
+        return np.mean(survival_deltas[~np.isnan(survival_deltas)])
 
     def calc(object self):
         cdef int tau
