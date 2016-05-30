@@ -60,6 +60,10 @@ setup(
             #'mdtraj_contrib/analysis/water_dynamics.c',
             'mdtraj_contrib/analysis/water_dynamics.pyx',
         ]),
+        Extension('mdtraj_contrib.optimize.bootstrap', [
+            #'mdtraj_contrib/analysis/water_dynamics.c',
+            'mdtraj_contrib/optimize/bootstrap.pyx',
+        ]),
     ],
     test_suite = 'nose.collector',
     tests_require=readlist('requirements-test.txt'),

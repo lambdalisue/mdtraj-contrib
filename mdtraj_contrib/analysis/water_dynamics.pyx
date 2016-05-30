@@ -14,8 +14,10 @@
 # lambdalisue to make it faster and compatible with MDTraj
 #
 #******************************************************************************
+import itertools
 import numpy as np
 import mdtraj as md
+import pandas as pd
 cimport numpy as np
 
 ctypedef np.ndarray ARRAY
@@ -29,6 +31,7 @@ cdef double lg2(double x):
     Ref: https://en.wikipedia.org/wiki/Legendre_polynomials
     """
     return (3 * x**2 - 1) / 2.
+
 
 def build_dipole_vectors(object trajectory,
                          ARRAY[INT_t, ndim=1] index_at_t,
@@ -51,6 +54,7 @@ def build_dipole_vectors(object trajectory,
     cdef ARRAY[FLOAT_t, ndim=2] H2 = coords[index_at_t + 2]
     cdef ARRAY[FLOAT_t, ndim=2] vectors = (H1 + H2) * 0.5 - Ox
     return vectors
+
 
 def build_unit_vectors(ARRAY[FLOAT_t, ndim=2] vectors):
     """
@@ -119,6 +123,7 @@ cdef class OrientationalRelaxation(object):
         for tau in range(1, self.taumax + 1):
             yield self._calc_mean_relaxation(tau)
 
+
 def calc_orientational_relaxation(object trajectory,
                                   ARRAY[INT_t, ndim=2] indexes,
                                   int t0=0, int tf=-1, int taumax=20):
@@ -126,6 +131,44 @@ def calc_orientational_relaxation(object trajectory,
         trajectory, indexes, t0, tf, taumax
     )
     return instance.calc()
+
+
+def find_orientational_relaxation(object trajectory,
+                                  str selection,
+                                  float radius,
+                                  int t0=0, int tf=-1, int taumax=10,
+                                  object callback=None):
+    cdef ARRAY[INT_t, ndim=2] water = trajectory.topology.select('water and name O')
+    cdef ARRAY[INT_t, ndim=2] atoms = trajectory.topology.select(selection)
+    cdef ARRAY[FLOAT_t, ndim=2] distances
+    cdef ARRAY[INT_t, ndim=2] indexes
+    cdef ARRAY[INT_t, ndim=3] atom_pairs
+    cdef ARRAY[INT_t, ndim=2] Y
+
+    cdef list df = []
+    cdef int atom
+    cdef int n
+    for i, atom in enumerate(atoms):
+        atom_pairs = np.array(list(
+            zip(itertools.cycle([atom]), water)
+        ))
+        distances = md.compute_distances(trajectory, atom_pairs)
+        indexes = np.where(distances < radius, 1, 0) * (water + 1)
+        indexes -= 1
+        Y = list(calc_orientational_relaxation(
+            trajectory, indexes,
+            t0=t0, tf=tf, taumax=taumax
+        ))
+        n = len(Y)
+        df.append(pd.DataFrame({
+            'residue': [str(trajectory.topology.atom(atom).residue)] * n,
+            'atom': [trajectory.topology.atom(atom).name] * n,
+            'frame': np.linspace(0, taumax, n),
+            'value': Y,
+        }).fillna(0))
+        if callback is not None:
+            callback(i)
+    return pd.concat(df, axis=0)
 
 
 cdef class SurvivalProbability(object):
@@ -174,6 +217,7 @@ cdef class SurvivalProbability(object):
         for tau in range(1, self.taumax+1):
             yield self._calc_mean_survival(tau)
 
+
 def calc_survival_probability(object trajectory,
                               ARRAY[INT_t, ndim=2] indexes,
                               int t0=0, int tf=-1, int taumax=20):
@@ -181,3 +225,41 @@ def calc_survival_probability(object trajectory,
         trajectory, indexes, t0, tf, taumax
     )
     return instance.calc()
+
+
+def find_survival_probability(object trajectory,
+                                  str selection,
+                                  float radius,
+                                  int t0=0, int tf=-1, int taumax=10,
+                                  object callback=None):
+    cdef ARRAY[INT_t, ndim=2] water = trajectory.topology.select('water and name O')
+    cdef ARRAY[INT_t, ndim=2] atoms = trajectory.topology.select(selection)
+    cdef ARRAY[FLOAT_t, ndim=2] distances
+    cdef ARRAY[INT_t, ndim=2] indexes
+    cdef ARRAY[INT_t, ndim=3] atom_pairs
+    cdef ARRAY[INT_t, ndim=2] Y
+
+    cdef list df = []
+    cdef int atom
+    cdef int n
+    for i, atom in enumerate(atoms):
+        atom_pairs = np.array(list(
+            zip(itertools.cycle([atom]), water)
+        ))
+        distances = md.compute_distances(trajectory, atom_pairs)
+        indexes = np.where(distances < radius, 1, 0) * (water + 1)
+        indexes -= 1
+        Y = list(calc_survival_probability(
+            trajectory, indexes,
+            t0=t0, tf=tf, taumax=taumax
+        ))
+        n = len(Y)
+        df.append(pd.DataFrame({
+            'residue': [str(trajectory.topology.atom(atom).residue)] * n,
+            'atom': [trajectory.topology.atom(atom).name] * n,
+            'frame': np.linspace(0, taumax, n),
+            'value': Y,
+        }).fillna(0))
+        if callback is not None:
+            callback(i)
+    return pd.concat(df, axis=0)
